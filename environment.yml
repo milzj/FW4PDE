@@ -1,0 +1,12 @@
+name: SAA4PDE
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8.11
+  - pip=20.2.4
+  - fenics=2019.1.0
+  - scipy=1.7.0
+  - numpy=1.21.1
+  - matplotlib=3.4.2
+  - dolfin-adjoint=2019.1.0
