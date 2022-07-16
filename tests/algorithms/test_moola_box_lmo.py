@@ -7,12 +7,11 @@ from dolfin import *
 from dolfin_adjoint import *
 import moola
 
-
 @pytest.mark.parametrize("n", [64, 128, 32])
 @pytest.mark.parametrize("beta", [0.1, 1e-3, 1e-2, 1.0])
 def test_moola_box_lmo(n, beta):
 	"""
-	The solution to min_x (g, x) + beta norm(x,l1) s.t. lb <= x <= ub
+	The solution to min_x (g, x) + beta norm(x,L1) s.t. lb <= x <= ub
 	satisfies the fixed point equation
 
 	x = projection(u-projection(u, -beta, beta), lb, ub),
@@ -23,8 +22,6 @@ def test_moola_box_lmo(n, beta):
 
 	atol = 1e-6
 	rtol = 1e-15
-
-
 
 	mesh = UnitSquareMesh(n, n)
 
@@ -63,21 +60,19 @@ def test_moola_box_lmo(n, beta):
 
 	moola_box_lmo.solve(gradient, v_moola)
 
-
-	def l1_norm(v):
-		return np.sum(np.abs(v))
-
-
 	def projection(v, a, b):
 		_v = np.minimum(v, b)
 		return np.maximum(a, _v)
 
 
-	solution = v_moola.data.vector()[:]
-	u = solution - gradient.data.vector()[:]
-	u_projection = projection(u, -beta, beta)
-	_solution = projection(u-u_projection, lb, ub)
+	solution = v_moola.data
+	u = solution.vector().get_local() - gradient.data.vector().get_local()
 
-	assert np.linalg.norm(solution-_solution) < atol
-	assert np.linalg.norm(solution-_solution)/(np.linalg.norm(solution)+1.0) < rtol
+	u_projection = projection(u, -beta, beta)
+	__solution = projection(u-u_projection, lb, ub)
+	_solution = Function(W)
+	_solution.vector().set_local(__solution)
+
+	assert errornorm(solution, _solution, degree_rise = 0) < atol
+	assert errornorm(solution,_solution, degree_rise = 0)/(norm(solution)+1.0) < rtol
 

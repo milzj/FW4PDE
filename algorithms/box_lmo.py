@@ -60,6 +60,7 @@ class MoolaBoxLMO(NumpyBoxLMO):
 
 	def solve(self, gradient, v):
 
-		self._solve(gradient.data.vector()[:])
+		self._solve(gradient.data.vector().get_local())
 
-		v.data.vector()[:] = self._solution
+		v.data.vector().set_local(self._solution)
+		v.bump_version()

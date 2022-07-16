@@ -5,7 +5,7 @@ here = Path(__file__).parent
 sys.path.insert(0, str(here.parent) + "/problem")
 sys.path.insert(0, str(here.parent) + "/algorithms")
 sys.path.insert(0, str(here.parent) + "/base")
-sys.path.insert(0, str(here.parent) + "/linesearch")
+sys.path.insert(0, str(here.parent) + "/stepsize")
 
 import pytest
 import numpy as np
