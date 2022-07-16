@@ -18,7 +18,7 @@ from base import norm_L1
 @pytest.mark.parametrize("n", [64, 128, 356])
 def test_norm_L1(seed, n):
 
-	rtol = 1e-14
+	rtol = 1e-143
 	mesh = UnitSquareMesh(dolfin.MPI.comm_self, n, n)
 
 	W = FunctionSpace(mesh, "DG", 0)
