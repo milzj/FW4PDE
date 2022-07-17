@@ -1,2 +1,3 @@
 from .quasi_armijo_goldstein import QuasiArmijoGoldstein
 from .decreasing_step_size import DecreasingStepSize
+from .dunn_harshbarger_step_size import DunnHarshbargerStepSize

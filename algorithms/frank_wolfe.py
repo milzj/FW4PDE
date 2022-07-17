@@ -69,7 +69,7 @@ class FrankWolfe(object):
 
 		u_minus_v = u.copy().zero()
 
-		_u = u.copy()
+		u_new = u.copy()
 
 		obj = self.problem.obj
 		nonsmooth_obj = self.nonsmooth_functional
@@ -126,6 +126,8 @@ class FrankWolfe(object):
 				break
 
 			best_minus_lower = objective_best - objective_lower
+			print("objective_best - objective_lower<={}".format(best_minus_lower))
+
 			if best_minus_lower <= self.options["ftol"]:
 				print("objective_best - objective_lower<={}".format(best_minus_lower))
 				break
@@ -136,9 +138,10 @@ class FrankWolfe(object):
 
 
 			# Perform line search
-			s, u, ls_calls = self.linesearch.do_linesearch(obj, nonsmooth_obj, u, v, u_minus_v, dual_gap, _u, obj_u, iteration)
+			s, ls_calls = self.linesearch.do_linesearch(obj, nonsmooth_obj, u, v, u_minus_v, dual_gap, u_new, obj_u, iteration)
 
 			print("ls_calls={}".format(ls_calls))
+			print("\n")
 
 			iteration += 1
 
