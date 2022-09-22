@@ -1,13 +1,13 @@
-"""Implements Example 7.1 from
-G. Wachsmuth and D. Wachsmuth. Convergence and regularization results for opti-
-mal control problems with sparsity functional. ESAIM Control. Optim. Calc. Var.,
-17(3):858–886, 2011. doi:10.1051/cocv/2010027.
+"""Implements Example 5.7 from
+K. Kunisch and D. Walter. On fast convergence rates for generalized conditional gradient
+methods with backtracking stepsize. arXiv:2109.15217v1
 """
 
 from fenics import *
 from dolfin_adjoint import *
 import moola
 import matplotlib.pyplot as plt
+import numpy as np
 
 set_log_level(30)
 
@@ -21,33 +21,39 @@ from stepsize import DunnHarshbargerStepSize
 lb = Constant(-30.0)
 ub = Constant(30.0)
 
-beta = 0.5
-yd_expr = Expression("sin(2*pi*x[0])*sin(2*pi*x[1])*exp(2*x[0])/6.0", degree = 0)
+beta = 0.001
+yd = Expression("sin(2*pi*x[0])*sin(2*pi*x[1])*exp(2*x[0])/6.0", degree = 1)
 
 
-n = 32
+n = 256
 maxiter = 1000
-gtol = 1e-8
-ftol = 1e-8
-mesh = UnitIntervalMesh(n,n)
+gtol = 1e-10
+ftol = -np.inf
+mesh = UnitSquareMesh(n,n)
 
 U = FunctionSpace(mesh, "DG", 0)
 V = FunctionSpace(mesh, "CG", 1)
 
-yd = Function(V)
-yd.interpolate(yd_expr)
-
 scaled_L1_norm = ScaledL1Norm(U,beta)
 
 u = Function(U)
-y = Function(V)
+
+y = TrialFunction(V)
 v = TestFunction(V)
 
-F = (inner(grad(y), grad(v)) - u * v) * dx
-bc = DirichletBC(V, 0.0, "on_boundary")
-solve(F == 0, y, bc)
+a = inner(grad(y), grad(v)) * dx
+L = u*v*dx
 
-J = assemble(0.5*inner(y-yd,y-yd)*dx)
+
+bc = DirichletBC(V, Constant(0.0), "on_boundary")
+
+A, b = assemble_system(a, L, bc)
+solver = LUSolver(A, "petsc")
+
+Y = Function(V)
+solver.solve(Y.vector(), b)
+
+J = assemble(0.5*inner(Y-yd,Y-yd)*dx)
 
 control = Control(u)
 rf = ReducedFunctional(J, control)
@@ -58,7 +64,7 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-linesearch = QuasiArmijoGoldstein(alpha=0.5, gamma=0.5)
+linesearch = QuasiArmijoGoldstein(gamma=0.99)
 #linesearch = DecreasingStepSize()
 #linesearch = DunnHarshbargerStepSize()
 
@@ -78,3 +84,12 @@ plt.savefig("example57_best.pdf")
 
 error = errornorm(solution_final, solution_best, degree_rise = 0)
 print("Difference of best and final iterate={}".format(error))
+
+
+solution_final = sol["control_final"]
+obj = problem.obj
+obj(solution_final)
+gradient = obj.derivative(solution_final).primal()
+gradient_vec = gradient.data.vector()[:]
+np.savetxt("gradient_vec.out", gradient_vec)
+np.savetxt("solution_vec.out", solution_final.data.vector()[:])

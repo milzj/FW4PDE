@@ -36,7 +36,7 @@ class FrankWolfe(object):
 				"objective_best": np.inf,
 				"objective_lower": -np.inf,
 				"iteration": 0,
-				"dual_gap": np.inf
+				"dual_gap": -np.inf
 		}
 
 
@@ -128,11 +128,12 @@ class FrankWolfe(object):
 			best_minus_lower = objective_best - objective_lower
 			print("objective_best - objective_lower<={}".format(best_minus_lower))
 
-			if best_minus_lower <= self.options["ftol"]:
+			# For convex objectives best_minus_lower is nonnegative
+			if best_minus_lower >= 0.0 and best_minus_lower <= self.options["ftol"]:
 				print("objective_best - objective_lower<={}".format(best_minus_lower))
 				break
 
-			if iteration > self.options["maxiter"]:
+			if iteration >= self.options["maxiter"]:
 				break
 
 

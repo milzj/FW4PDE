@@ -1,9 +1,19 @@
 class QuasiArmijoGoldstein(object):
+	"""
 
-	def __init__(self, alpha=0.5, gamma=0.99):
+	References:
+	-----------
+
+	[KW21] 	K. Kunisch and D. Walter. On fast convergence rates for generalized conditional gradient
+		methods with backtracking stepsize. arXiv:2109.15217v1
+
+	"""
+
+	def __init__(self, alpha=0.5, gamma=0.99, ls_max = 1000):
 
 		self._alpha = alpha
 		self._gamma = gamma
+		self._ls_max = ls_max
 
 	def __str__(self):
 
@@ -15,7 +25,6 @@ class QuasiArmijoGoldstein(object):
 	def do_linesearch(self, obj, nonsmooth_obj, u, v, u_minus_v, dual_gap, u_new, obj_u, iteration):
 
 		u_new.zero()
-		print("Line search 0")
 
 		def update_control(s):
 			if update_control.s_new != s:
@@ -33,14 +42,16 @@ class QuasiArmijoGoldstein(object):
 
 		alpha = self._alpha
 		gamma = self._gamma
+		ls_max = self._ls_max
 
 		s = 1.0
 
 		phi_u = obj_u + nonsmooth_obj(u.data)
 		phi_u_new = phi(s)
 
-		ls_calls = 0
-		while  phi_u < phi_u_new + alpha*s*dual_gap and ls_calls < 1000:
+		ls_calls = 1
+		while  phi_u + 2e-13*abs(phi_u) < phi_u_new + alpha*s*dual_gap and ls_calls < ls_max:
+
 			s *= gamma
 			phi_u_new = phi(s)
 			ls_calls += 1

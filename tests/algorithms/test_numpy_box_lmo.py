@@ -35,8 +35,7 @@ def test_numpy_box_lmo(n, seed, beta):
 
 
 	def projection(v, a, b):
-		_v = np.minimum(v, b)
-		return np.maximum(a, _v)
+		return np.clip(v, a, b)
 
 	u = solution - gradient
 	u_projection = projection(u, -beta, beta)

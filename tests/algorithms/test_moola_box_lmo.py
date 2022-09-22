@@ -61,11 +61,11 @@ def test_moola_box_lmo(n, beta):
 	moola_box_lmo.solve(gradient, v_moola)
 
 	def projection(v, a, b):
-		_v = np.minimum(v, b)
-		return np.maximum(a, _v)
+		return np.clip(v, a, b)
 
-
+	# LMO solution
 	solution = v_moola.data
+	# Evaluate fixed point equation (output is _solution)
 	u = solution.vector().get_local() - gradient.data.vector().get_local()
 
 	u_projection = projection(u, -beta, beta)

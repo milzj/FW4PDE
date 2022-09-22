@@ -44,11 +44,13 @@ class NumpyBoxLMO(object):
 		self._solution *= 0.0
 		self._gradient[:] = gradient[:]
 
+
 		idx = self._gradient > beta
 		self._solution[idx] = lb[idx]
 
 		idx = self._gradient < -beta
 		self._solution[idx] = ub[idx]
+
 
 
 class MoolaBoxLMO(NumpyBoxLMO):
