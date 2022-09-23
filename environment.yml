@@ -1,4 +1,4 @@
-name: SAA4PDE
+name: FW4PDE
 channels:
   - conda-forge
   - defaults
