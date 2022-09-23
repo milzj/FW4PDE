@@ -16,8 +16,6 @@ from problem import ScaledL1Norm, BoxConstraints
 from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
 from stepsize import DunnHarshbargerStepSize
 
-
-
 lb = Constant(-30.0)
 ub = Constant(30.0)
 
@@ -25,9 +23,10 @@ beta = 0.001
 yd = Expression("sin(2*pi*x[0])*sin(2*pi*x[1])*exp(2*x[0])/6.0", degree = 1)
 
 
-n = 256
+n = 64 # 256
+
 maxiter = 1000
-gtol = 1e-10
+gtol = 1e-8
 ftol = -np.inf
 mesh = UnitSquareMesh(n,n)
 
@@ -43,7 +42,6 @@ v = TestFunction(V)
 
 a = inner(grad(y), grad(v)) * dx
 L = u*v*dx
-
 
 bc = DirichletBC(V, Constant(0.0), "on_boundary")
 
@@ -64,27 +62,20 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-linesearch = QuasiArmijoGoldstein(gamma=0.99)
+linesearch = QuasiArmijoGoldstein(gamma=0.8)
 #linesearch = DecreasingStepSize()
 #linesearch = DunnHarshbargerStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, linesearch=linesearch, lmo=moola_box_lmo, options=options)
+solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,
+		linesearch=linesearch, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 
 solution_final = sol["control_final"].data
 plot(solution_final)
-plt.savefig("example57_final.pdf")
-
-solution_best = sol["control_best"].data
-plot(solution_best)
-plt.savefig("example57_best.pdf")
-
-error = errornorm(solution_final, solution_best, degree_rise = 0)
-print("Difference of best and final iterate={}".format(error))
-
+plt.savefig("solution.pdf")
 
 solution_final = sol["control_final"]
 obj = problem.obj

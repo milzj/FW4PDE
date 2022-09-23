@@ -18,7 +18,6 @@ from stepsize import DunnHarshbargerStepSize
 
 
 
-
 lb = Constant(-10.0)
 ub = Expression('x[0] <= 0.25 ? 0 : -5.0+20.0*x[0]', degree=1)
 
@@ -68,7 +67,8 @@ linesearch = QuasiArmijoGoldstein(alpha=0.5, gamma=0.99)
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, linesearch=linesearch, lmo=moola_box_lmo, options=options)
+solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, 
+		linesearch=linesearch, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 

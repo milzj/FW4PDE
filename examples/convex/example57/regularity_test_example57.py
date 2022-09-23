@@ -3,7 +3,7 @@ import numpy as np
 
 from stats import regularity_test
 
-n = 256
+n = 64
 beta = 0.001
 mesh = fenics.UnitSquareMesh(n,n)
 U = fenics.FunctionSpace(mesh, "DG", 0)
