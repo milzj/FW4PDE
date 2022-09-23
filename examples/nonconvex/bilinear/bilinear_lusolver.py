@@ -10,7 +10,7 @@ set_log_level(30)
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
 from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize
+from stepsize import DunnHarshbargerStepSize, DunnScalingStepSize
 
 
 
@@ -65,7 +65,8 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-linesearch = QuasiArmijoGoldstein(gamma=0.8)
+#linesearch = QuasiArmijoGoldstein(gamma=0.8)
+linesearch = DunnScalingStepSize()
 #linesearch = DecreasingStepSize()
 #linesearch = DunnHarshbargerStepSize()
 

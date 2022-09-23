@@ -14,19 +14,22 @@ set_log_level(30)
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
 from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize
+from stepsize import DunnHarshbargerStepSize, DunnScalingStepSize
+from stepsize import DemyanovRubinovOptimalStepSize
+from stepsize import DemyanovRubinovAdaptiveStepSize
 
 lb = Constant(-30.0)
 ub = Constant(30.0)
 
 beta = 0.001
+
 yd = Expression("sin(2*pi*x[0])*sin(2*pi*x[1])*exp(2*x[0])/6.0", degree = 1)
 
 
-n = 64 # 256
+n = 256
 
 maxiter = 1000
-gtol = 1e-8
+gtol = 1e-10
 ftol = -np.inf
 mesh = UnitSquareMesh(n,n)
 
@@ -62,8 +65,15 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-linesearch = QuasiArmijoGoldstein(gamma=0.8)
+problem.obj(u_moola)
+gradient = problem.obj.gradient(u_moola)
+hessian = problem.obj.hessian(u_moola)(gradient).apply(gradient)/gradient.norm()**2
+theta = np.sqrt(1.0/hessian); print(theta)
+#linesearch = QuasiArmijoGoldstein(gamma=0.8)
+#linesearch = DunnScalingStepSize(theta=theta)
 #linesearch = DecreasingStepSize()
+#linesearch = DemyanovRubinovOptimalStepSize()
+linesearch = DemyanovRubinovAdaptiveStepSize(M=hessian)
 #linesearch = DunnHarshbargerStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
