@@ -15,19 +15,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.8
+      - name: Set up Python 3.8.11
         uses: actions/setup-python@v3
         with:
-          python-version: 3.8
+          python-version: 3.8.11
       - name: Add conda to system path
         run: |
           # $CONDA is an environment variable pointing to the root of the miniconda directory
           echo $CONDA/bin >> $GITHUB_PATH
       - name: Install dependencies
         run: |
-          conda install -n base conda-libmamba-solver
-          sudo conda env update --file environment.yml --name base --experimental-solver=libmamba
+          conda env update --file environment.yml --name base
       - name: Test with pytest
         run: |
-          pip install -U pytest
+          conda install pytest
           pytest
