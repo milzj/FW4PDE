@@ -9,6 +9,8 @@ See [environment.yml](environment.yml).
 
 ## References
 
+See [lib.md](misc/lit.md)
+
 * M. Besançon, A. Carderera, S. Pokutta (2022) [FrankWolfe.jl: A High-Performance and Flexible Toolbox for Frank–Wolfe Algorithms and Conditional Gradients](https://doi.org/10.1287/ijoc.2022.1191). INFORMS Journal on Computing 0(0). 
 
 * Dunn, J.C.: [Rates of convergence for conditional gradient algorithms near singular and nonsingular extremals](https://doi.org/10.1137/0317015). SIAM J. Control Optim. 17(2), 187–211 (1979)
