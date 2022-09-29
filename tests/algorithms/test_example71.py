@@ -10,8 +10,12 @@ set_log_level(30)
 
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
+from stepsize import QuasiArmijoGoldstein
+from stepsize import DecreasingStepSize
 from stepsize import DunnHarshbargerStepSize
+from stepsize import DunnScalingStepSize
+from stepsize import DemyanovRubinovAdaptiveStepSize
+from stepsize import DemyanovRubinovOptimalStepSize
 
 def example71():
 	"""Implements desired state of Example 7.1 in Ref. [1].
@@ -65,13 +69,17 @@ def example71():
 
 	return rf, u, U, lb, ub, beta
 
-@pytest.mark.parametrize("linesearch", [QuasiArmijoGoldstein(), DecreasingStepSize(), DunnHarshbargerStepSize()])
+@pytest.mark.parametrize("linesearch", [QuasiArmijoGoldstein(), DecreasingStepSize(), \
+                                        DunnHarshbargerStepSize(), DunnScalingStepSize(), \
+                                        DemyanovRubinovAdaptiveStepSize(), \
+                                        DemyanovRubinovOptimalStepSize()])
 def test_example71(linesearch):
+	"Test is designed to test step sizes."
 
 	maxiter = 1000
 	gtol = 1e-6
 	ftol = 1e-6
-	
+
 	options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
 	rf, u, U, lb, ub, beta = example71()
@@ -83,7 +91,9 @@ def test_example71(linesearch):
 	box_constraints = BoxConstraints(U, lb, ub)
 	moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-	solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, linesearch=linesearch, lmo=moola_box_lmo, options=options)
+	solver = FrankWolfe(problem, initial_point=u_moola,\
+                nonsmooth_functional=scaled_L1_norm, linesearch=linesearch,\
+                lmo=moola_box_lmo, options=options)
 
 	sol = solver.solve()
 
