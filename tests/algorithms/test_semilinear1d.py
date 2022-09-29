@@ -127,12 +127,12 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
     box_constraints = BoxConstraints(U, lb, ub)
     moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-    linesearch = DemyanovRubinovOptimalStepSize()
+    stepsize = DemyanovRubinovOptimalStepSize()
 
     options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
     solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, \
-                linesearch=linesearch, lmo=moola_box_lmo, options=options)
+                stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
     sol = solver.solve()
 

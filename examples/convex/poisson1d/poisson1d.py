@@ -49,13 +49,13 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-linesearch = QuasiArmijoGoldstein()
-#linesearch = DecreasingStepSize()
-#linesearch = DunnHarshbargerStepSize()
+stepsize = QuasiArmijoGoldstein()
+#stepsize = DecreasingStepSize()
+#stepsize = DunnHarshbargerStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, linesearch=linesearch, lmo=moola_box_lmo, options=options)
+solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 

@@ -69,11 +69,11 @@ def example71():
 
     return rf, u, U, lb, ub, beta
 
-@pytest.mark.parametrize("linesearch", [QuasiArmijoGoldstein(), DecreasingStepSize(), \
+@pytest.mark.parametrize("stepsize", [QuasiArmijoGoldstein(), DecreasingStepSize(), \
                                         DunnHarshbargerStepSize(), DunnScalingStepSize(), \
                                         DemyanovRubinovAdaptiveStepSize(), \
                                         DemyanovRubinovOptimalStepSize()])
-def test_example71(linesearch):
+def test_example71(stepsize):
     "Test is designed to test step sizes."
 
     maxiter = 1000
@@ -92,7 +92,7 @@ def test_example71(linesearch):
     moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
     solver = FrankWolfe(problem, initial_point=u_moola,\
-                nonsmooth_functional=scaled_L1_norm, linesearch=linesearch,\
+                nonsmooth_functional=scaled_L1_norm, stepsize=stepsize,\
                 lmo=moola_box_lmo, options=options)
 
     sol = solver.solve()

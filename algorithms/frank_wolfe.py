@@ -17,11 +17,11 @@ References:
 class FrankWolfe(object):
 
     def __init__(self, problem, nonsmooth_functional=None, initial_point=None,
-            linesearch=None, lmo=None, options={}, callback={}):
+            stepsize=None, lmo=None, options={}, callback={}):
 
         self.problem = problem
         self.nonsmooth_functional = nonsmooth_functional
-        self.linesearch = linesearch
+        self.stepsize = stepsize
         self.lmo = lmo
 
         _options = self.default_options()
@@ -55,7 +55,7 @@ class FrankWolfe(object):
 
         s = "Franke-Wolfe method.\n"
         s += "Maximum iterations: {}\n".format(self.options["maxiter"])
-        s += "{}".format(self.linesearch.__str__())
+        s += "{}".format(self.stepsize.__str__())
 
         return s
 
@@ -139,7 +139,7 @@ class FrankWolfe(object):
 
 
             # Perform line search
-            s, ls_calls = self.linesearch.compute_step_size(obj, nonsmooth_obj, u, v, u_minus_v, dual_gap, u_new, obj_u, iteration)
+            s, ls_calls = self.stepsize.compute_step_size(obj, nonsmooth_obj, u, v, u_minus_v, dual_gap, u_new, obj_u, iteration)
 
             print("ls_calls={}".format(ls_calls))
             print("\n")
