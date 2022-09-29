@@ -7,7 +7,7 @@ class DemyanovRubinovAdaptiveStepSize(object):
 
 	phi(s) <= phi(0) - dual_gap(u) s + (1/2)s^2 M norm(d)**2,
 
-	where s in [0,1] is the minimum of the right-hand side.
+    where s in [0,1] is the minimizer of the right-hand side.
 	After M (and s) satisfy the inequality, the step size s
 	is choosen and M is divided by 2 to ensure that M<= 2L,
 	where L is the Lipschitz constant of the gradient of f.
@@ -20,7 +20,8 @@ class DemyanovRubinovAdaptiveStepSize(object):
 
 	TODO: Should L1 norm instead of L2 norm be used?
 	Should we increase M until
-	f(x+sd) <= f(x) + f'(x)sd + 1/2 s^2 norm(d)^2?
+    f(x+sd) <= f(x) + f'(x)sd + 1/2 s^2 M norm(d)^2?
+    rather than the above approach?
 
 	References:
 	----------
@@ -63,19 +64,17 @@ class DemyanovRubinovAdaptiveStepSize(object):
 
 		def phi(s):
 			update_control(s)
-#			val = obj(u_new) + nonsmooth_obj(u_new.data)
-			val = obj(u_new)
+			val = obj(u_new) + nonsmooth_obj(u_new.data)
 			return val
 
 		dual_gap2 = dual_gap - nonsmooth_obj(u.data) + nonsmooth_obj(v.data)
 		s = min(1.0, dual_gap/d_norm**2/M)
 
-#		phi_u = obj_u + nonsmooth_obj(u.data)
-		phi_u = obj_u
+		phi_u = obj_u + nonsmooth_obj(u.data)
 		phi_u_new = phi(s)
 
 		ls_calls = 1
-		while  phi_u_new > phi_u - s*dual_gap2 + 0.5*s**2*M*d_norm**2  and ls_calls < ls_max:
+		while  phi_u_new > phi_u - s*dual_gap + 0.5*s**2*M*d_norm**2  and ls_calls < ls_max:
 
 			M = 2*M
 			s = min(1.0, dual_gap/d_norm**2/M)
