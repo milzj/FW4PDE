@@ -68,7 +68,7 @@ linesearch = QuasiArmijoGoldstein(alpha=0.5, gamma=0.99)
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
 solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, 
-		linesearch=linesearch, lmo=moola_box_lmo, options=options)
+        linesearch=linesearch, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 

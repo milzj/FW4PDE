@@ -72,14 +72,14 @@ theta = np.sqrt(1.0/hessian); print(theta)
 #linesearch = QuasiArmijoGoldstein(gamma=0.8)
 #linesearch = DunnScalingStepSize(theta=theta)
 #linesearch = DecreasingStepSize()
-#linesearch = DemyanovRubinovOptimalStepSize()
-linesearch = DemyanovRubinovAdaptiveStepSize(M=hessian)
+linesearch = DemyanovRubinovOptimalStepSize()
+#linesearch = DemyanovRubinovAdaptiveStepSize(M=hessian)
 #linesearch = DunnHarshbargerStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
 solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,
-		linesearch=linesearch, lmo=moola_box_lmo, options=options)
+        linesearch=linesearch, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 

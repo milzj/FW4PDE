@@ -25,16 +25,16 @@ eps_values = []
 for n in [2**8, 2**10, 2**12, 2**14, 2**16]:
 
 
-	mesh = UnitIntervalMesh(n)
-	V = FunctionSpace(mesh, "CG", 1)
+    mesh = UnitIntervalMesh(n)
+    V = FunctionSpace(mesh, "CG", 1)
 
-	y = project(yd, V)
+    y = project(yd, V)
 
-	mesh = UnitIntervalMesh(2**2*n)
-	err = errornorm(yd, y, mesh=mesh, degree_rise=0)
+    mesh = UnitIntervalMesh(2**2*n)
+    err = errornorm(yd, y, mesh=mesh, degree_rise=0)
 
-	eps_values.append(1/n)
-	E_values.append(err**2)
+    eps_values.append(1/n)
+    E_values.append(err**2)
 
 
 

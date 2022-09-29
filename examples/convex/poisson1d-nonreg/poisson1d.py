@@ -25,12 +25,12 @@ ftol = 1e-12
 mesh = UnitIntervalMesh(n)
 
 class Omega_0(SubDomain):
-	def inside(self, x, on_boundary):
-		return x[0] <= np.pi/4.0
+    def inside(self, x, on_boundary):
+        return x[0] <= np.pi/4.0
 
 class Omega_1(SubDomain):
-	def inside(self, x, on_boundary):
-		return x[0] > np.pi/4.0
+    def inside(self, x, on_boundary):
+        return x[0] > np.pi/4.0
 
 domains = MeshFunction('size_t', mesh, mesh.topology().dim()-1)
 
