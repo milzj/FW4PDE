@@ -125,7 +125,7 @@ class FrankWolfe(object):
         elif status == 1:
             msg += "Dual gap <= tolerance."
         else:
-            msg *= "Difference of best and lower objective function values <= tolerance."
+            msg += "Difference of best and lower objective function values <= tolerance."
 
         return msg
 
