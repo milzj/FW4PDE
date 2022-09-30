@@ -29,6 +29,7 @@ def example71():
     optimal control problems with sparsity functional, ESAIM: COCV 17 (2011) 858-886,
     https://doi.org/10.1051/cocv/2010027
     """
+    set_working_tape(Tape())
 
     lb = Constant(-30.0)
     ub = Constant(30.0)
@@ -69,18 +70,19 @@ def example71():
 
     return rf, u, U, lb, ub, beta
 
-@pytest.mark.parametrize("stepsize", [QuasiArmijoGoldstein(), DecreasingStepSize(), \
-                                        DunnHarshbargerStepSize(), DunnScalingStepSize(), \
-                                        DemyanovRubinovAdaptiveStepSize(), \
-                                        DemyanovRubinovOptimalStepSize()])
-def test_example71(stepsize):
+@pytest.mark.parametrize("stepsize", [QuasiArmijoGoldstein, DecreasingStepSize, \
+                                        DunnHarshbargerStepSize, DunnScalingStepSize, \
+                                        DemyanovRubinovAdaptiveStepSize, \
+                                        DemyanovRubinovOptimalStepSize])
+@pytest.mark.parametrize("display", [0, 1, 2, 3])
+def test_example71(stepsize, display):
     "Test is designed to test step sizes."
 
     maxiter = 1000
     gtol = 1e-6
     ftol = 1e-6
 
-    options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
+    options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol, "display": display}
 
     rf, u, U, lb, ub, beta = example71()
 
@@ -92,7 +94,7 @@ def test_example71(stepsize):
     moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
     solver = FrankWolfe(problem, initial_point=u_moola,\
-                nonsmooth_functional=scaled_L1_norm, stepsize=stepsize,\
+                nonsmooth_functional=scaled_L1_norm, stepsize=stepsize(),\
                 lmo=moola_box_lmo, options=options)
 
     sol = solver.solve()

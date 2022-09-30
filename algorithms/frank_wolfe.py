@@ -183,7 +183,7 @@ class FrankWolfe(object):
             self.data.update({"objective_lower": objective_lower})
             self.data.update({"best_minus_lower": objective_best - objective_lower})
 
-            self.display(self.iter_status, 2, iteration=iteration)
+            self.display(self.iter_status, 3, iteration=iteration)
             status = self.check_convergence()
 
             if status != 0:
