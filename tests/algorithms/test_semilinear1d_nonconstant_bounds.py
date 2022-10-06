@@ -32,8 +32,8 @@ def compute_yd(n, y_init=None):
     delta = 9.
     q = 1.0
 
-    alpha = -1.0
-    beta = 1.0
+    lb = Constant(-1.0)
+    ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0, np=np.pi)
 
     x0 = 2**(-delta)/3.0
 
@@ -46,7 +46,7 @@ def compute_yd(n, y_init=None):
     y = Function(V)
     v = TestFunction(V)
 
-    u = Expression('x[0] <= x0 ? alpha : beta ', degree=0, x0=x0, alpha=alpha, beta=beta)
+    u = Expression('x[0] <= x0 ? lb : ub ', degree=0, x0=x0, lb=lb, ub=ub)
 
     F = (inner(grad(y), grad(v)) + y*abs(y)**3*v - u*v) * dx
     bc = DirichletBC(V, 0.0, "on_boundary")
@@ -93,7 +93,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
     beta = 0.0
     lb = Constant(-1.0)
-    ub = Constant(1.0)
+    ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0, np=np.pi)
 
     m = UnitIntervalMesh(n)
     mesh = UnitIntervalMesh(2*n)
@@ -148,7 +148,9 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
     x_vec = solution_vec - gradient_vec
     w_vec = np.clip(x_vec, -beta, beta)
-    w_vec = np.clip(x_vec-w_vec, lb.values()[0], ub.values()[0])
+    lb_vec = project(lb, U).vector()[:]
+    ub_vec = project(ub, U).vector()[:]
+    w_vec = np.clip(x_vec-w_vec, lb_vec, ub_vec)
     w = Function(U)
     w.vector()[:] = w_vec
 
@@ -162,7 +164,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
         v_vec = solution_vec - dg.vector()[:]
         w_vec = np.clip(v_vec, -beta, beta)
-        prox_v_vec = np.clip(v_vec-w_vec, lb.values()[0], ub.values()[0])
+        prox_v_vec = np.clip(v_vec-w_vec, lb_vec, ub_vec)
 
         prox_v = Function(U)
         prox_v.vector()[:] = prox_v_vec
@@ -193,7 +195,7 @@ def test_convergence_rate():
 
     distance of u_h to true solution should converge with rate h
 
-    canonical criticality measure should converge with rate h^3/2
+    canonical criticality measure should converge with rate h
 
     normal map-based criticality measure should converge with rate h
     """
@@ -210,6 +212,8 @@ def test_convergence_rate():
     ftol = -np.inf
 
     for n in ns:
+        print(n)
+        print("\n")
         solution, dual_gap, canonical_cm, normal_cm, solution_error, gradient \
             = solve_problem(n, n_ref, u_init=None, maxiter=1000, gtol=gtol, ftol=ftol)
 
@@ -271,14 +275,14 @@ def test_convergence_rate():
     # Convergence of canonical criticality measure
     rates = convergence_rates(canonical_criticality_measures, [1.0/n for n in ns])
 
-    assert np.isclose(np.median(rates), 1.0, atol=0.2)
+    assert np.isclose(np.median(rates), 1.5, atol=0.2)
 
     X = np.ones((np.size(ns), 2)); X[:, 1] = np.log([1.0/n for n in ns])
     x, residudals, rank, s = np.linalg.lstsq(X, np.log(canonical_criticality_measures), rcond=None)
     rate = x[1]
     constant = np.exp(x[0])
 
-    assert np.isclose(rate, 1.0, atol=0.2)
+    assert np.isclose(rate, 1.5, atol=0.2)
 
 
 
