@@ -275,14 +275,14 @@ def test_convergence_rate():
     # Convergence of canonical criticality measure
     rates = convergence_rates(canonical_criticality_measures, [1.0/n for n in ns])
 
-    assert np.isclose(np.median(rates), 1.5, atol=0.2)
+    assert np.isclose(np.median(rates), 1.0, atol=0.2)
 
     X = np.ones((np.size(ns), 2)); X[:, 1] = np.log([1.0/n for n in ns])
     x, residudals, rank, s = np.linalg.lstsq(X, np.log(canonical_criticality_measures), rcond=None)
     rate = x[1]
     constant = np.exp(x[0])
 
-    assert np.isclose(rate, 1.5, atol=0.2)
+    assert np.isclose(rate, 1.0, atol=0.2)
 
 
 
