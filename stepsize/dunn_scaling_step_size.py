@@ -53,7 +53,6 @@ class DunnScalingStepSize(object):
 
         u.assign(u_new)
 
-        print(omega)
         return omega, 0
 
 
