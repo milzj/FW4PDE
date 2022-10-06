@@ -107,6 +107,11 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
     u = Function(U)
     if u_init != None:
         u = project(u_init, U)
+        u_vec = u.vector()[:]
+        lb_vec = project(lb, U).vector()[:]
+        ub_vec = project(ub, U).vector()[:]
+        u_vec = np.clip(u_vec, lb_vec, ub_vec)
+        u.vector()[:] = u_vec
 
     y = Function(V)
     v = TestFunction(V)
@@ -128,6 +133,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
     moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
     stepsize = DemyanovRubinovOptimalStepSize()
+    stepsize = QuasiArmijoGoldstein()
 
     options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
@@ -191,7 +197,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 def test_convergence_rate():
     """Code verification for a one-dimensional initial value problem.
 
-    dual_gap(u_h) should converge with rate h^2
+    dual_gap(u_h) should converge with rate h
 
     distance of u_h to true solution should converge with rate h
 
@@ -238,14 +244,14 @@ def test_convergence_rate():
     # Convergence dual gap
     rates = convergence_rates(dual_gaps, [1.0/n for n in ns])
 
-    assert np.isclose(np.median(rates), 2.0, atol=0.2)
+    assert np.isclose(np.median(rates), 1.0, atol=0.2)
 
     X = np.ones((np.size(ns), 2)); X[:, 1] = np.log([1.0/n for n in ns])
     x, residudals, rank, s = np.linalg.lstsq(X, np.log(dual_gaps), rcond=None)
     rate = x[1]
     constant = np.exp(x[0])
 
-    assert np.isclose(rate, 2.0, atol=0.2)
+    assert np.isclose(rate, 1.0, atol=0.2)
 
     # Convergence of solutions
     rates = convergence_rates(errors, [1.0/n for n in ns])
