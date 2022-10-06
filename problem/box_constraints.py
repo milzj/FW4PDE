@@ -6,13 +6,11 @@ class BoxConstraints(object):
 
         import fenics
 
-        _lb = fenics.Function(function_space)
-        _lb.interpolate(lb)
+        _lb = fenics.project(lb, function_space)
         self._lb = _lb
         self._lb_vec = _lb.vector().get_local()
 
-        _ub = fenics.Function(function_space)
-        _ub.interpolate(ub)
+        _ub = fenics.project(ub, function_space)
         self._ub = _ub
         self._ub_vec = _ub.vector().get_local()
 
