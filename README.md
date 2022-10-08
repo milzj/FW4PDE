@@ -1,15 +1,31 @@
 # FW4PDE: Frank--Wolfe algorithms for PDE-constrained optimization
 
+The package implements conditional gradient methods for the solution 
+of the PDE-constrained optimization problems
+
+$$
+	\min_{u \in U_{\text{ad}}} \, J(S(u)) + \beta \|u\|_{L^1(D)},
+$$
+
+where $\beta \geq 0$, $S(u)$ is the solution to a potentially nonlinear PDE, and 
+$U_{\text{ad}} = \{ u \in L^2(D) : a \leq u \leq b \}$ with $a$, $b \in L^2(D)$.
+
 ## Examples
 
+Examples of convex PDE-constrained problems can be found in [convex](examples/convex)
+and of potentially nonconvex ones in [nonconvex](examples/nonconvex).
 
 ## Dependencies
 
-See [environment.yml](environment.yml).
+The following packages are required:
+
+- [FEniCS](https://fenicsproject.org/)
+- [dolfin-adjoint](http://www.dolfin-adjoint.org/)
+- [moola](https://github.com/funsim/moola)
+
+See [environment.yml](environment.yml) for a complete list of dependencies.
 
 ## References
-
-See [lib.md](misc/lit.md)
 
 * M. Besançon, A. Carderera, S. Pokutta (2022) [FrankWolfe.jl: A High-Performance and Flexible Toolbox for Frank–Wolfe Algorithms and Conditional Gradients](https://doi.org/10.1287/ijoc.2022.1191). INFORMS Journal on Computing 0(0). 
 
@@ -23,6 +39,4 @@ See [lib.md](misc/lit.md)
 
 * K. Kunisch, D. Walter, On fast convergence rates for generalized conditional gradient methods with backtracking stepsize, preprint, https://arxiv.org/abs/2109.15217, 2021
 
-## Author
-
-The code has been implemented by Johannes Milz.
+A complete list of references is provided in [lib.md](misc/lit.md).
