@@ -1,11 +1,3 @@
-"""Implements a bilinear (nonconvex) control problem.
-
-References:
-----------
-
-Michelle Vallejos. MGOPT with gradient projection method for solving bilinear
-elliptic optimal control problems. Computing, 87(1-2):21–33, 2010.
-"""
 import numpy as np
 
 from fenics import *
@@ -17,9 +9,7 @@ set_log_level(30)
 
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize
-
+from stepsize import DemyanovRubinovOptimalStepSize
 
 
 lb = Constant(-10.0)
@@ -34,7 +24,7 @@ kappa = Expression("x[1]*x[1]+0.05", degree = 2)
 n = 256
 maxiter = 1000
 gtol = 1e-6
-ftol = 1e-6
+ftol = -np.inf
 mesh = UnitSquareMesh(n,n)
 
 U = FunctionSpace(mesh, "DG", 0)
@@ -62,13 +52,12 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-linesearch = QuasiArmijoGoldstein(gamma=0.8)
-#linesearch = DecreasingStepSize()
-#linesearch = DunnHarshbargerStepSize()
+stepsize = DemyanovRubinovOptimalStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, linesearch=linesearch, lmo=moola_box_lmo, options=options)
+solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
+            stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 

@@ -126,10 +126,10 @@ sol = solver.solve()
 
 solution_final = sol["control_final"].data
 plot(solution_final)
-plt.savefig("solution.png")
+plt.savefig("solution_nonconstant.png")
 plt.close()
 
 U = FunctionSpace(yd_mesh, "DG", 0)
 plot(project(true_solution, U))
-plt.savefig("true_solution.png")
+plt.savefig("true_solution_nonconstant.png")
 plt.close()

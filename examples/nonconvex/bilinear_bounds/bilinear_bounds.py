@@ -17,13 +17,11 @@ set_log_level(30)
 
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize
+from stepsize import QuasiArmijoGoldstein
 
 
 
 lb = Constant(-4.0)
-#lb = Constant(0.0)
 ub = Constant(4.0)
 
 beta = 0.0001
@@ -61,13 +59,12 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-linesearch = QuasiArmijoGoldstein()
-#linesearch = DecreasingStepSize()
-#linesearch = DunnHarshbargerStepSize()
+stepsize = QuasiArmijoGoldstein()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, linesearch=linesearch, lmo=moola_box_lmo, options=options)
+solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
+            stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 

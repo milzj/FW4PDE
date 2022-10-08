@@ -23,7 +23,6 @@ kappa = Expression("x[1]*x[1]+0.05", degree = 2)
 f = Expression("cos(2.0*pi*x[0]*x[1])*sin(2*pi*x[1]*x[0])", degree = 1)
 yd = Expression("10.0*sin(2*pi*x[0])*sin(2*pi*x[1])*exp(2*x[0])/6.0", degree = 0)
 yd = Expression('(0.25 < x[0] && x[0] < 0.75 && 0.25 < x[1] && x[1] < 0.75) ? -2.0 : 1.0 + yd', degree=0, yd=yd)
-#g = Expression("exp(2*x[0]*x[0] + 2.0*x[1]*x[1])", degree=0)
 g = Expression("1.0+x[1]*x[1] + x[0]*x[0]", degree=0)
 
 n = 256
@@ -72,7 +71,8 @@ stepsize = DunnScalingStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, stepsize=stepsize, lmo=moola_box_lmo, options=options)
+solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
+                stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
 
