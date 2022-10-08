@@ -13,10 +13,7 @@ set_log_level(30)
 
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize
-
-
+from stepsize import QuasiArmijoGoldstein
 
 lb = Constant(-10.0)
 ub = Expression('x[0] <= 0.25 ? 0 : -5.0+20.0*x[0]', degree=1)
@@ -28,7 +25,7 @@ g = Expression("10.0*cos(8*pi*x[0])*cos(8*pi*x[1])", degree = 1)
 n = 256
 maxiter = 1000
 gtol = 1e-10
-ftol = 1e-10
+ftol = -np.inf
 mesh = UnitSquareMesh(n,n)
 
 U = FunctionSpace(mesh, "DG", 0)
@@ -61,9 +58,7 @@ u_moola = moola.DolfinPrimalVector(u)
 box_constraints = BoxConstraints(U, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-stepsize = QuasiArmijoGoldstein(alpha=0.5, gamma=0.99)
-#stepsize = DecreasingStepSize()
-#stepsize = DunnHarshbargerStepSize()
+stepsize = QuasiArmijoGoldstein(alpha=0.5, gamma=0.75)
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 

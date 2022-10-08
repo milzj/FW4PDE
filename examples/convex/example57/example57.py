@@ -13,10 +13,7 @@ set_log_level(30)
 
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize, DunnScalingStepSize
-from stepsize import DemyanovRubinovOptimalStepSize
-from stepsize import DemyanovRubinovAdaptiveStepSize
+from stepsize import QuasiArmijoGoldstein
 
 lb = Constant(-30.0)
 ub = Constant(30.0)
@@ -25,18 +22,16 @@ beta = 0.001
 
 yd = Expression("sin(2*pi*x[0])*sin(2*pi*x[1])*exp(2*x[0])/6.0", degree = 1)
 
-
-n = 256
+n = 32
 
 maxiter = 1000
-gtol = 1e-10
+gtol = 1e-8
 ftol = -np.inf
 mesh = UnitSquareMesh(n,n)
 
 U = FunctionSpace(mesh, "DG", 0)
 V = FunctionSpace(mesh, "CG", 1)
 
-scaled_L1_norm = ScaledL1Norm(U,beta)
 
 u = Function(U)
 
@@ -62,35 +57,29 @@ rf = ReducedFunctional(J, control)
 problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
-box_constraints = BoxConstraints(U, lb, ub)
-moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+with stop_annotating():
+    scaled_L1_norm = ScaledL1Norm(U,beta)
+    box_constraints = BoxConstraints(U, lb, ub)
+    moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-problem.obj(u_moola)
-gradient = problem.obj.gradient(u_moola)
-hessian = problem.obj.hessian(u_moola)(gradient).apply(gradient)/gradient.norm()**2
-theta = np.sqrt(1.0/hessian); print(theta)
-#stepsize = QuasiArmijoGoldstein(gamma=0.8)
-#stepsize = DunnScalingStepSize(theta=theta)
-#stepsize = DecreasingStepSize()
-stepsize = DemyanovRubinovOptimalStepSize()
-#stepsize = DemyanovRubinovAdaptiveStepSize(M=hessian)
-#stepsize = DunnHarshbargerStepSize()
+    stepsize = QuasiArmijoGoldstein(gamma=0.75)
 
-options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
+    options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol, "display": 2}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,
-        stepsize=stepsize, lmo=moola_box_lmo, options=options)
+    solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,
+            stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
-sol = solver.solve()
+    sol = solver.solve()
 
-solution_final = sol["control_final"].data
-plot(solution_final)
-plt.savefig("solution.pdf")
+    solution_final = sol["control_final"].data
+    plot(solution_final)
+    plt.savefig("solution.pdf")
 
-solution_final = sol["control_final"]
-obj = problem.obj
-obj(solution_final)
-gradient = obj.derivative(solution_final).primal()
-gradient_vec = gradient.data.vector()[:]
-np.savetxt("gradient_vec.out", gradient_vec)
-np.savetxt("solution_vec.out", solution_final.data.vector()[:])
+    solution_final = sol["control_final"]
+    obj = problem.obj
+    obj(solution_final)
+    gradient = obj.derivative(solution_final).primal()
+    gradient_vec = gradient.data.vector()[:]
+    np.savetxt("gradient_vec.out", gradient_vec)
+    np.savetxt("solution_vec.out", solution_final.data.vector()[:])
+
