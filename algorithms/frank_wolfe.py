@@ -39,7 +39,7 @@ class FrankWolfe(object):
                 "iteration": -1,
                 "dual_gap": -np.inf,
                 "ls_calls": -1,
-                "step_size": -1.,
+                "step_size": -1.0,
                 "status": 0
         }
 
@@ -59,8 +59,12 @@ class FrankWolfe(object):
     @property
     def iter_status(self):
         keys =  ["iteration", "objective_best", "dual_gap", "best_minus_lower", "ls_calls", "step_size"]
-        output = [self.data[k] for k in keys if k in self.data]
-        return "{:<10d} {:<15e} {:<15e} {:<25e} {:<10d} {:<15e}".format(*output)
+        if self.data["iteration"] == 0:
+            output = [self.data[k] for k in keys[0:-2]]
+            return "{:<10d} {:<15e} {:<15e} {:<25e}".format(*output)
+        else:
+            output = [self.data[k] for k in keys if k in self.data]
+            return "{:<10d} {:<15e} {:<15e} {:<25e} {:<10d} {:<15e}".format(*output)
 
 
     def display(self, text, print_level, iteration=-1):
