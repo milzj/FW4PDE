@@ -25,7 +25,7 @@ def plot_random_diffusion_coefficient(outdir, n, num_samples):
         c = fenics.plot(u)
         plt.colorbar(c)
 
-        plt.title(r"Sample of $\exp(\kappa)$ $(i={})$".format(i))
+        plt.title(r"Sample of $\kappa$ $(i={})$".format(i))
         filename = outdir + "exp_kappa" + "_sample=" + str(i)
         plt.savefig(filename)
         plt.close()
