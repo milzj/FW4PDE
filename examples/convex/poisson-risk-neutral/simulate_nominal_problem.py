@@ -22,7 +22,7 @@ if not os.path.exists(outdir):
     os.makedirs(outdir)
 
 
-n =  256
+n =  150
 sample = np.zeros(4)
 
 poisson_problem = RandomPoissonProblem(n)

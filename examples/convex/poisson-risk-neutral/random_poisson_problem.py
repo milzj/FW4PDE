@@ -31,6 +31,7 @@ class RandomPoissonProblem(object):
         self.v_test = TestFunction(V)
 
         self.y = Function(V)
+        self._kappa = Function(V)
 
         self.kappa = RandomDiffusionCoefficient()
 
@@ -45,12 +46,14 @@ class RandomPoissonProblem(object):
     def state(self, y, u, sample):
 
         kappa = self.kappa.sample(sample)
-
+        #kappa = project(kappa, self.U)
+        _kappa = self._kappa
+        _kappa.interpolate(kappa)
         bcs = self.bcs
         v_test = self.v_test
         y_trial = self.y_trial
 
-        a = inner(kappa*grad(y_trial), grad(v_test))*dx
+        a = inner(_kappa*grad(y_trial), grad(v_test))*dx
         L = u*v_test*dx
 
         A, b = assemble_system(a, L, bcs)
@@ -61,12 +64,13 @@ class RandomPoissonProblem(object):
     def __call__(self, u, sample):
 
         y = self.y
+        y.vector().zero()
+
         yd = self.yd
 
-        y.vector().zero()
         self.state(y, u, sample)
 
-        return assemble(0.5*inner(y-yd,y-yd)*dx)
+        return assemble(0.5*(y-yd)**2*dx)
 
 
 

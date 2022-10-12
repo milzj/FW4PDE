@@ -23,8 +23,8 @@ if not os.path.exists(outdir):
     os.makedirs(outdir)
 
 
-n =  256
-N = 50
+n = 150
+N = 150
 std = 1.0
 
 poisson_problem = RandomPoissonProblem(n)
@@ -41,12 +41,11 @@ U = poisson_problem.control_space
 control = Control(u)
 
 # https://diego.assencio.com/?index=c34d06f4f4de2375658ed41f70177d59
-J = 0.0
+J = 0
 for i in range(N):
     sample = sampler.sample()
     j = poisson_problem(u, sample)
-#    J += 1.0/(i+1.0)*(j-J)
-    J += 1.0/N*j
+    J += 1.0/(i+1.0)*(j-J)
 
 rf = ReducedFunctional(J, control)
 

@@ -12,7 +12,7 @@ def plot_random_diffusion_coefficient(outdir, n, num_samples):
     exp_kappa = RandomDiffusionCoefficient()
 
     mesh = fenics.UnitSquareMesh(n,n)
-    U = fenics.FunctionSpace(mesh, "DG", 0)
+    U = fenics.FunctionSpace(mesh, "CG", 1)
     u = fenics.Function(U)
 
     for i in range(num_samples):

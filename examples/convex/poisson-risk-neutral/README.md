@@ -25,14 +25,13 @@ The following animations show several realizations of the random field $\kappa$.
 
 ![](random_diffusion_coefficient/random_diffusion_coefficient.gif)
 
-The animation can be generated using [plot_random_fields.sh](random_fields/plot_random_fields.sh).
 
 ## Nominal and reference solutions
 
-![](simulation_output/nominal_solution_n=256.png)
-![](simulation_output/riskneutral_solution_n=256_N=50.png)
+![](simulation_output/nominal_solution_n=150.png)
+![](simulation_output/riskneutral_solution_n=150_N=150.png)
 
-The nominal solution (left) and reference SAA solution with $N=50$ (right). The nominal solution is the solution to 
+The nominal solution (left) and SAA solution with $N=150$ (right). The nominal solution is the solution to 
 
 $$
 \min_{u\in U_{\text{ad}}} (1/2)\\|S(u,\mathbb{E}[\xi])-y_d\\|\_{L^2(D)}^2  + \beta \\|u\\|\_{L^1(D)}.
