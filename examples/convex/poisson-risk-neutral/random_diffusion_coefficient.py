@@ -13,7 +13,7 @@ class RandomDiffusionCoefficient(object):
     https://epubs.siam.org/doi/abs/10.1137/16M109870X
 
     There the domain is (-1/2, 1/2)^2. We transform
-    the coordinates to (0,1)^2 via x -> 2x+1/2.
+    the coordinates to (0,1)^2 via x -> x-1/2.
     """
 
     def __init__(self, degree=1):
@@ -25,8 +25,8 @@ class RandomDiffusionCoefficient(object):
         kappa_str += "+0.25*sin(1.17*pi*x[0])*sin(1.17*pi*x[1])*d"
 
 
-        kappa_str = kappa_str.replace("x[0]", "(2.0*x[0]+0.5)")
-        kappa_str = kappa_str.replace("x[1]", "(2.0*x[1]+0.5)")
+        kappa_str = kappa_str.replace("x[0]", "(x[0]-0.5)")
+        kappa_str = kappa_str.replace("x[1]", "(x[1]-0.5)")
 
 
         self.kappa = Expression(kappa_str, a=0.0, b=0.0, c=0.0, d=0.0, pi=np.pi, degree=degree)

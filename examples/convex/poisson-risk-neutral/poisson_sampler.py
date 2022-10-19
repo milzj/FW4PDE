@@ -20,8 +20,8 @@ class PoissonSampler(object):
 
         self.bump_seed()
         np.random.seed(self.seed)
-
-        return self.std*np.random.randn(4)
+        Z = np.random.randn(4)
+        return self.std*Z
 
 
 if __name__ == "__main__":
