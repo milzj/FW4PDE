@@ -14,8 +14,10 @@ from stepsize import DemyanovRubinovOptimalStepSize
 import os
 
 from random_poisson_problem import RandomPoissonProblem
+from log_normal_field import TruncatedGaussianSampler
 from log_normal_field import GaussianSampler
 from solver_options import SolverOptions
+from random_field_options import RandomFieldOptions
 
 
 outdir = "simulation_output/"
@@ -24,18 +26,18 @@ if not os.path.exists(outdir):
 
 
 n = 150
-
-
 N = 150
-std = 1.0
-num_addends = 5
-len_scale = 0.1
-M = (2*num_addends)**2
 
+rf_options = RandomFieldOptions().options
+num_addends = rf_options["num_addends"]
+num_rvs = rf_options["num_rvs"]
+len_scale = rf_options["len_scale"]
+std = rf_options["std"]
+rv_range = rf_options["rv_range"]
 
 poisson_problem = RandomPoissonProblem(n, num_addends, len_scale)
 solver_options = SolverOptions().options
-sampler = GaussianSampler(std=std)
+sampler = TruncatedGaussianSampler(std=std, rv_range=rv_range)
 
 lb = poisson_problem.lb
 ub = poisson_problem.ub
@@ -49,7 +51,7 @@ control = Control(u)
 # https://diego.assencio.com/?index=c34d06f4f4de2375658ed41f70177d59
 J = 0
 for i in range(N):
-    sample = sampler.sample(M)
+    sample = sampler.sample(num_rvs)
     j = poisson_problem(u, sample)
     J += 1.0/(i+1.0)*(j-J)
 

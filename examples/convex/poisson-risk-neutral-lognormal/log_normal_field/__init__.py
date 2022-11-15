@@ -1,2 +1,3 @@
 from .gaussian_sampler import GaussianSampler
+from .truncated_gaussian_sampler import TruncatedGaussianSampler
 from .log_normal_field import LogNormalField

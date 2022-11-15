@@ -15,7 +15,7 @@ import os
 
 from random_poisson_problem import RandomPoissonProblem
 from solver_options import SolverOptions
-
+from random_field_options import RandomFieldOptions
 
 outdir = "simulation_output/"
 if not os.path.exists(outdir):
@@ -23,11 +23,13 @@ if not os.path.exists(outdir):
 
 
 n =  150
-num_addends = 5
-len_scale = 0.1
 
-M = (2*num_addends)**2
-sample = np.zeros(M)
+# Get random field options
+rf_options = RandomFieldOptions().options
+num_addends = rf_options["num_addends"]
+num_random_vars = rf_options["num_rvs"]
+len_scale = rf_options["len_scale"]
+sample = np.zeros(num_random_vars)
 
 poisson_problem = RandomPoissonProblem(n, num_addends, len_scale)
 solver_options = SolverOptions().options

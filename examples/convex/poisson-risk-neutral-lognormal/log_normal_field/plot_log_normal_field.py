@@ -1,26 +1,30 @@
 import fenics
 
 from gaussian_sampler import GaussianSampler
+from truncated_gaussian_sampler import TruncatedGaussianSampler
 from log_normal_field import LogNormalField
 
 import matplotlib.pyplot as plt
 
+import numpy as np
 
-def plot_log_normal_field(outdir, n, num_samples):
+def plot_log_normal_field(outdir, n, num_addends):
 
-    sampler = GaussianSampler()
-    num_addends = 5
-    num_samples = (2*num_addends)**2
+    std = np.sqrt(2.0)
+    sampler = TruncatedGaussianSampler(std=std)
+    num_addends = num_addends
+    num_rvs = (2*num_addends)**2
     N = 20
 
     mesh = fenics.UnitSquareMesh(n,n)
     U = fenics.FunctionSpace(mesh, "CG", 1)
     u = fenics.Function(U)
-    exp_kappa = LogNormalField(U, num_addends=num_addends)
+    len_scale = 0.1
+    exp_kappa = LogNormalField(U, num_addends=num_addends, len_scale=len_scale)
 
     for i in range(N):
 
-        sample = sampler.sample(num_samples)
+        sample = sampler.sample(num_rvs)
         exp_kappa_sample = exp_kappa.sample(sample)
 
         u.interpolate(exp_kappa_sample)
@@ -39,11 +43,11 @@ if __name__ == "__main__":
     import sys, os
 
     n = 64
-    num_samples = 10
+    num_addends = 10
 
     outdir = "log_normal_field/"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
 
-    plot_log_normal_field(outdir, n, num_samples)
+    plot_log_normal_field(outdir, n, num_addends)
