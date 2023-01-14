@@ -4,6 +4,8 @@
 *.zip
 *.out
 
+*.swp
+
 old/
 
 # Byte-compiled / optimized / DLL files
