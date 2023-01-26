@@ -1,2 +1,1 @@
-pandoc -s -V biblio-files=lit.bib --citeproc -f latex -t gfm -o lit.md lit.tex
-
+pandoc --filter pandoc-citeproc --bibliography=lit_tidalfarm.bib  -f latex -t gfm -o lit.md lit.tex
