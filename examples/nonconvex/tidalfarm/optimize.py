@@ -1,16 +1,17 @@
 """The code solves the optimization problem considered in https://zenodo.org/record/224251
 but with free-slip boundary conditions for the shores.
 
-The steady shallow water solver is taken from 
+The steady shallow water solver is taken from
 
 https://github.com/OpenTidalFarm/OpenTidalFarm/blob/master/opentidalfarm/solvers/coupled_sw_solver.py
 
 """
 
 import os
-if not os.path.exists("output"):
-   os.makedirs("output")
-
+outdir = "output/"
+if not os.path.exists(outdir):
+   os.makedirs(outdir)
+from datetime import datetime
 
 import numpy as np
 from dolfin import *
@@ -35,7 +36,7 @@ from stepsize import DecreasingAdaptiveStepSize
 
 x_max = 2000
 y_max = 1000
-N = 20
+N = 100
 
 domain = RectangularDomain(0, 0, x_max, y_max, nx=N, ny=N)
 mesh = domain.mesh
@@ -59,7 +60,6 @@ friction = Constant(0.0025)
 g = Constant(9.81)
 f_u = Constant((0, 0))
 rho = 1025.0
-
 
 # function spaces
 V_h = VectorElement("CG", mesh.ufl_cell(), 2)
@@ -189,8 +189,8 @@ u_moola = moola.DolfinPrimalVector(control)
 box_constraints = BoxConstraints(control_space, lb, ub)
 moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-stepsize = QuasiArmijoGoldstein(gamma=0.5)
-#stepsize = DecreasingStepSize()
+#stepsize = QuasiArmijoGoldstein(gamma=0.5)
+stepsize = DecreasingStepSize()
 #stepsize = DunnScalingStepSize()
 #stepsize = DemyanovRubinovOptimalStepSize()
 #stepsize = DemyanovRubinovAdaptiveStepSize()
@@ -210,13 +210,27 @@ sol = solver.solve()
 solution_final = sol["control_final"].data
 c = plot(solution_final)
 plt.colorbar(c)
-plt.savefig("output/solution_final.pdf")
-plt.savefig("output/solution_final.png")
+plt.savefig("output/solution_final_N_{}.pdf".format(N))
+plt.savefig("output/solution_final_N_{}.png".format(N))
 plt.close()
 
 solution_best = sol["control_best"].data
 c = plot(solution_best)
 plt.colorbar(c)
-plt.savefig("output/solution_best.pdf")
-plt.savefig("output/solution_best.png")
+plt.savefig("output/solution_best_N_{}.pdf".format(N))
+plt.savefig("output/solution_best_N_{}.png".format(N))
 plt.close()
+
+
+now = datetime.now().strftime("%d-%B-%Y-%H-%M-%S")
+
+filename = outdir + now + "_solution_best_N={}.txt".format(N)
+np.savetxt(filename, solution_best.vector()[:])
+filename = outdir + now + "_solution_final_N={}.txt".format(N)
+np.savetxt(filename, solution_final.vector()[:])
+
+
+file = File(outdir + "/" + "solution" +  "_best_N={}".format(N) + ".pvd")
+file << solution_best
+file = File(outdir + "/" + "solution" +  "_final_N={}".format(N) + ".pvd")
+file << solution_final
