@@ -1,5 +1,6 @@
 from .quasi_armijo_goldstein import QuasiArmijoGoldstein
 from .decreasing_step_size import DecreasingStepSize
+from .decreasing_adaptive_step_size import DecreasingAdaptiveStepSize
 from .dunn_harshbarger_step_size import DunnHarshbargerStepSize
 from .dunn_scaling_step_size import DunnScalingStepSize
 from .demyanov_rubinov_optimal_step_size import DemyanovRubinovOptimalStepSize

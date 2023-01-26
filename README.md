@@ -16,6 +16,8 @@ with $a \leq b$.
 Examples of convex PDE-constrained problems can be found in [convex](examples/convex)
 and of potentially nonconvex ones in [nonconvex](examples/nonconvex).
 
+The implementation can be used to optimally [design renewable tidal-stream energy farms](./examples/nonconvex/tidalfarm).
+
 ## Dependencies
 
 The following packages are required:

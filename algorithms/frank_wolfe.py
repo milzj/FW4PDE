@@ -58,7 +58,7 @@ class FrankWolfe(object):
 
     @property
     def iter_status(self):
-        keys =  ["iteration", "objective_best", "dual_gap", "best_minus_lower", "ls_calls", "step_size"]
+        keys =  ["iteration", "objective_final", "dual_gap", "best_minus_lower", "ls_calls", "step_size"]
         if self.data["iteration"] == 0:
             output = [self.data[k] for k in keys[0:-2]]
             return "{:<10d} {:<15e} {:<15e} {:<25e}".format(*output)
