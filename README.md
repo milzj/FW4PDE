@@ -1,3 +1,6 @@
+[![GNU GPLv3 License](https://img.shields.io/github/license/milzj/FW4PDE)](https://choosealicense.com/licenses/gpl-3.0/)
+[![Test FW4PDE](https://github.com/milzj/FW4PDE/actions/workflows/test-FW4PDE.yml/badge.svg?style=plastic)](https://github.com/milzj/FW4PDE/actions/workflows/test-FW4PDE.yml)
+
 # FW4PDE: Frank--Wolfe algorithms for PDE-constrained optimization
 
 The package implements conditional gradient methods for the solution 
@@ -17,6 +20,13 @@ Examples of convex PDE-constrained problems can be found in [convex](examples/co
 and of potentially nonconvex ones in [nonconvex](examples/nonconvex).
 
 The implementation can be used to optimally [design renewable tidal-stream energy farms](./examples/nonconvex/tidalfarm).
+
+## Installation
+
+```
+conda env create -f environment.yml
+conda activate FW4PDE
+```
 
 ## Dependencies
 
