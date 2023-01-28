@@ -1,0 +1,70 @@
+@Article{Pedregosa2018,
+  author        = {Pedregosa, Fabian and Negiar, Geoffrey and Askari, Armin and Jaggi, Martin},
+  journal       = {Proceedings of the 23rd International Conference on Artificial Intelligence and Statistics (AISTATS) 2020},
+  title         = {Linearly Convergent {F}rank-{W}olfe with Backtracking Line-Search},
+  year          = {2018},
+  note          = {Version as of September 8, 2022 available at \url{https://arxiv.org/abs/1806.05123v5}},
+  archiveprefix = {arXiv},
+  copyright     = {Creative Commons Attribution 4.0 International},
+  doi           = {10.48550/ARXIV.1806.05123},
+  keywords      = {Optimization and Control (math.OC), FOS: Mathematics},
+  primaryclass  = {math.OC},
+  publisher     = {arXiv},
+}
+
+@InProceedings{Pedregosa2020,
+  author    = {Pedregosa, Fabian and Negiar, Geoffrey and Askari, Armin and Jaggi, Martin},
+  booktitle = {Proceedings of the Twenty Third International Conference on Artificial Intelligence and Statistics},
+  title     = {Linearly Convergent {F}rank-{W}olfe with Backtracking Line-Search},
+  year      = {2020},
+  editor    = {Chiappa, Silvia and Calandra, Roberto},
+  month     = {26--28 Aug},
+  pages     = {1--10},
+  publisher = {PMLR},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {108},
+  url       = {https://proceedings.mlr.press/v108/pedregosa20a.html},
+}
+
+@Book{Lan2020,
+  Title                    = {First-order and {S}tochastic {O}ptimization {M}ethods for {M}achine {L}earning},
+  Author                   = {Lan, Guanghui},
+  Publisher                = {Springer},
+  Year                     = {2020},
+
+  Address                  = {Cham},
+  Series                   = {Springer Ser. Data Sci.},
+
+  Doi                      = {10.1007/978-3-030-39568-1},
+  Keywords                 = {stoch opt},
+  Owner                    = {jomi},
+  Timestamp                = {2020.08.03}
+}
+
+@Article{Nesterov2006,
+  Title                    = {Cubic regularization of {N}ewton method and its global performance},
+  Author                   = {Nesterov, {\relax Yu} and Polyak, Boris T},
+  Journal                  = {Math. Program.},
+  Year                     = {2006},
+  Number                   = {1},
+  Pages                    = {177--205},
+  Volume                   = {108},
+
+  Doi                      = {10.1007/s10107-006-0706-8},
+  Groups                   = {Cubic_Regularization},
+  Keywords                 = {Opt},
+  Owner                    = {jomi},
+  Publisher                = {Springer},
+  Timestamp                = {2018.08.30}
+}
+
+@Article{Kunisch2022,
+  author  = {Karl Kunisch and Daniel Walter},
+  journal = {Numer. Algebra Control Optim.},
+  title   = {On fast convergence rates for generalized conditional gradient methods with backtracking stepsize},
+  year    = {2022},
+  doi     = {10.3934/naco.2022026},
+  groups  = {milz:6},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
