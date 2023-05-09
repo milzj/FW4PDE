@@ -39,6 +39,38 @@ The implementation of the steady shallow water solver is based on
 that used in [OpenTidalFarm](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/master/opentidalfarm/solvers/coupled_sw_solver.py)
 and [Code for Simulations in Chapter 3 of Researchbrief](https://zenodo.org/record/224251).
 
+## Optimization problem
+
+The optimization problem is formulated as
+
+$$
+	\min_{u \in U_{\text{ad}}}  J(S(u)) + \beta \\|u\\|_{L^1(D)},
+$$
+
+where $u$ is the turbine friction, $\beta \geq 0$ is a cost parameter, $S(u)$ is the solution to steady state shallow water equations [eqns. (3.5) and (3.35)](https://link.springer.com/book/10.1007/978-3-319-59483-5), and 
+$U_{\text{ad}} = \\{ u \in L^2(D) : a \leq u \leq b \\}$ is the feasible set. Here $a = 0$
+is the minimum turbine friction and $b \approx 0.059$ is the maximum turbine friction.
+
+The turbine friction $c_t(d)$ is a nonnegative function of the turbine density function $d$ given by
+([eq. (3.9)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+
+$$
+	c_t(d) = (1/2) C_t A_t d.
+$$
+
+Here $C_t$ (dimensionless) is the thrust coefficient and $A_t$ (in square meter) is the turbine cross section. The term $(1/2) C_t A_t$ is the total amount of a turbine's friction (see [model_turbine.py](https://zenodo.org/record/224251)). The maximum turbine friction $b$ is obtained via
+
+$$
+  b = (1/2) C_t A_t/\text{minimum turbine distance}^2,
+$$
+
+where $\text{minimum turbine distance}$ (in meter) is the minimum distance between turbines.
+
+The turbine cross section $A_t$ is given by $A_t = \pi \cdot \text{blade radius}^2$ (see [model_turbine.py](https://zenodo.org/record/224251)). 
+
+We use $u=c_t(d)$ as a control, not the turbine density $d$. 
+
+
 ## References
 
 <div id="refs" class="references hanging-indent">
