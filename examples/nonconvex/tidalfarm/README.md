@@ -44,7 +44,7 @@ and [Code for Simulations in Chapter 3 of Researchbrief](https://zenodo.org/reco
 The optimization problem is formulated as
 
 $$
-	\min_{u \in U_{\text{ad}}}  J(S(u)) + \beta \\|u\\|_{L^1(D)},
+	\min_{u \in U_{\text{ad}}}  J(S(u),u) + \beta \\|u\\|_{L^1(D)},
 $$
 
 where $u$ on $D_{\text{array}}$ is the turbine friction, $\beta \geq 0$ is a cost parameter, $S(u)$ is the solution to steady state shallow water equations (see [eqns. (3.5) and (3.35)](https://link.springer.com/book/10.1007/978-3-319-59483-5)), and 
@@ -61,7 +61,7 @@ $$
 Here $C_t = 0.6$ (dimensionless) is the thrust coefficient and $A_t$ (in square meter) is the turbine cross section. The term $(1/2) C_t A_t$ is the total amount of a turbine's friction (see [model_turbine.py](https://zenodo.org/record/224251)). The maximum turbine friction $b$ is obtained via
 
 $$
-  b = (1/2) C_t A_t/\text{minimum turbine distance}^2,
+  b = (1/2) C_t A_t/(\text{minimum turbine distance})^2,
 $$
 
 where $\text{minimum turbine distance} = 40$ (in meter) is the minimum distance between turbines. Hence the maximum turbine density is $\text{minimum turbine distance}^2 = 6.25 \cdot 10^{-4}$.
@@ -69,7 +69,7 @@ where $\text{minimum turbine distance} = 40$ (in meter) is the minimum distance 
 The turbine cross section $A_t$ is given by 
 
 $$
-A_t = \pi \cdot \text{blade radius}^2
+A_t = \pi \cdot (\text{blade radius})^2
 $$
 
 (see [model_turbine.py](https://zenodo.org/record/224251)). Here $\text{blade radius} = 10$.
@@ -77,6 +77,20 @@ $$
 Using these definitions, we obtain [$b \approx 0.059$](https://www.wolframalpha.com/input?i=0.6*pi*10%5E2*0.5%2F40%2F40).
 
 We use $u=c_t(d)$, the turbine friction, as the control, not the turbine density $d$. 
+
+The power function $J_{\text{power}}$ is defined by (see [eq. (3.10)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+
+$$
+ J_{\text{power}}(y, u) = \int_{\text{array}} \rho u(x) \|y(x)\|_2^3 \mathrm{d} x
+$$
+
+where $\rho$ is the water density. 
+
+The objective function $J$, the profit, is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+
+$$
+	J_{profit}(y, u) = \text{revenue}(y, u) - \text{cost}(u)  = I \cdot k \cdot T J_{\text{power}}(y, u) - C \int_{D} u(x) \mathrm{d} x,
+$$
 
 
 ## References
