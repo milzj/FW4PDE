@@ -18,6 +18,8 @@ class DemyanovRubinovAdaptiveStepSize(object):
     The method requires an initial value of M which should
     be <= than the Lipschitz constant of the gradient of f.
 
+    See https://github.com/milzj/FW4PDE/issues/1 for some justification.
+
     TODO: Should L1 norm instead of L2 norm be used?
     Should we increase M until
     f(x+sd) <= f(x) + f'(x)sd + 1/2 s^2 M norm(d)^2?
@@ -37,6 +39,7 @@ class DemyanovRubinovAdaptiveStepSize(object):
     def __init__(self, M=1.0, ls_max = 1000):
 
         self._M = M
+        self._Mmin = 1e-16
         self._ls_max = ls_max
 
     def __str__(self):
@@ -50,6 +53,7 @@ class DemyanovRubinovAdaptiveStepSize(object):
         d_norm = u_minus_v.norm()
 
         M = self._M
+        Mmin = self._Mmin
         ls_max = self._ls_max
         u_new.zero()
 
@@ -84,7 +88,7 @@ class DemyanovRubinovAdaptiveStepSize(object):
         # Accept step
         u.assign(u_new)
         # Update M
-        self._M = 0.5*M
+        self._M = max(0.5*M, Mmin)
 
         return s, ls_calls
 
