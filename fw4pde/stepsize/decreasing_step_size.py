@@ -2,7 +2,7 @@ class DecreasingStepSize(object):
 
     def __str__(self):
 
-        s = "Fixed step size.\n"
+        s = "Standard decreasing step size (2/(2+k)).\n"
 
         return s
 
