@@ -26,13 +26,7 @@ import matplotlib.pyplot as plt
 
 set_log_level(30)
 
-from algorithms import FrankWolfe, MoolaBoxLMO
-from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize, DunnScalingStepSize
-from stepsize import DemyanovRubinovOptimalStepSize
-from stepsize import DemyanovRubinovAdaptiveStepSize
-from stepsize import DecreasingAdaptiveStepSize
+import fw4pde
 
 x_max = 2000
 y_max = 1000
@@ -174,7 +168,7 @@ beta = 1e-6*4800.0
 lb = Constant(0.0)
 ub = Constant(0.05890486225480863)
 
-scaled_L1_norm = ScaledL1Norm(control_space,beta)
+scaled_L1_norm = fw4pde.problem.ScaledL1Norm(control_space,beta)
 
 # power_functional = assemble(rho*0.5*C_t*A_t*control*inner(u,u)**1.5*site_dx(1))
 # power functional appears to be implemented in https://zenodo.org/record/224251
@@ -186,22 +180,21 @@ rf = ReducedFunctional(-1e-6*power_functional, ctrl)
 problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(control)
 
-box_constraints = BoxConstraints(control_space, lb, ub)
-moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+box_constraints = fw4pde.problem.BoxConstraints(control_space, lb, ub)
+moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-#stepsize = QuasiArmijoGoldstein(gamma=0.5)
-stepsize = DecreasingStepSize()
-#stepsize = DunnScalingStepSize()
-#stepsize = DemyanovRubinovOptimalStepSize()
-#stepsize = DemyanovRubinovAdaptiveStepSize()
-#stepsize = DecreasingAdaptiveStepSize()
+#stepsize = fw4pde.stepsize.DecreasingStepSize()
+stepsize = fw4pde.stepsize.DunnScalingStepSize()
+#stepsize = fw4pde.stepsize.DemyanovRubinovOptimalStepSize()
+stepsize = fw4pde.stepsize.DemyanovRubinovAdaptiveStepSize()
+#stepsize = fw4pde.stepsize.DecreasingAdaptiveStepSize()
 
 gtol= 1e-4
 ftol = -np.inf
-maxiter = 100
+maxiter = 10
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
+solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
                 stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
