@@ -47,28 +47,36 @@ $$
 	\min_{u \in U_{\text{ad}}}  J(S(u)) + \beta \\|u\\|_{L^1(D)},
 $$
 
-where $u$ is the turbine friction, $\beta \geq 0$ is a cost parameter, $S(u)$ is the solution to steady state shallow water equations [eqns. (3.5) and (3.35)](https://link.springer.com/book/10.1007/978-3-319-59483-5), and 
-$U_{\text{ad}} = \\{ u \in L^2(D) : a \leq u \leq b \\}$ is the feasible set. Here $a = 0$
+where $u$ on $D_{\text{array}}$ is the turbine friction, $\beta \geq 0$ is a cost parameter, $S(u)$ is the solution to steady state shallow water equations (see [eqns. (3.5) and (3.35)](https://link.springer.com/book/10.1007/978-3-319-59483-5)), and 
+$U_{\text{ad}} = \\{ u \in L^2(D_{\text{array}}) : a \leq u \leq b \\}$ is the feasible set. Here $a = 0$
 is the minimum turbine friction and $b \approx 0.059$ is the maximum turbine friction.
 
 The turbine friction $c_t(d)$ is a nonnegative function of the turbine density function $d$ given by
-([eq. (3.9)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+(see [eq. (3.9)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
 
 $$
 	c_t(d) = (1/2) C_t A_t d.
 $$
 
-Here $C_t$ (dimensionless) is the thrust coefficient and $A_t$ (in square meter) is the turbine cross section. The term $(1/2) C_t A_t$ is the total amount of a turbine's friction (see [model_turbine.py](https://zenodo.org/record/224251)). The maximum turbine friction $b$ is obtained via
+Here $C_t = 0.6$ (dimensionless) is the thrust coefficient and $A_t$ (in square meter) is the turbine cross section. The term $(1/2) C_t A_t$ is the total amount of a turbine's friction (see [model_turbine.py](https://zenodo.org/record/224251)). The maximum turbine friction $b$ is obtained via
 
 $$
   b = (1/2) C_t A_t/\text{minimum turbine distance}^2,
 $$
 
-where $\text{minimum turbine distance}$ (in meter) is the minimum distance between turbines.
+where $\text{minimum turbine distance} = 40$ (in meter) is the minimum distance between turbines. Hence the maximum turbine density is $\text{minimum turbine distance}^2 = 6.25 \cdot 10^{-4}$.
 
-The turbine cross section $A_t$ is given by $A_t = \pi \cdot \text{blade radius}^2$ (see [model_turbine.py](https://zenodo.org/record/224251)). 
+The turbine cross section $A_t$ is given by 
 
-We use $u=c_t(d)$ as a control, not the turbine density $d$. 
+$$
+A_t = \pi \cdot \text{blade radius}^2
+$$
+
+(see [model_turbine.py](https://zenodo.org/record/224251)). Here $\text{blade radius} = 10$.
+
+Using these definitions, we obtain [$b \approx 0.059$](https://www.wolframalpha.com/input?i=0.6*pi*10%5E2*0.5%2F40%2F40).
+
+We use $u=c_t(d)$, the turbine friction, as the control, not the turbine density $d$. 
 
 
 ## References
