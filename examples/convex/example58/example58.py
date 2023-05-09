@@ -11,9 +11,7 @@ import numpy as np
 
 set_log_level(30)
 
-from algorithms import FrankWolfe, MoolaBoxLMO
-from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein
+import fw4pde
 
 lb = Constant(-10.0)
 ub = Expression('x[0] <= 0.25 ? 0 : -5.0+20.0*x[0]', degree=1)
@@ -31,7 +29,7 @@ mesh = UnitSquareMesh(n,n)
 U = FunctionSpace(mesh, "DG", 0)
 V = FunctionSpace(mesh, "CG", 1)
 
-scaled_L1_norm = ScaledL1Norm(U,beta)
+scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta)
 
 u = Function(U)
 y = TrialFunction(V)
@@ -55,14 +53,14 @@ rf = ReducedFunctional(J, control)
 problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
-box_constraints = BoxConstraints(U, lb, ub)
-moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
+moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-stepsize = QuasiArmijoGoldstein(alpha=0.5, gamma=0.75)
+stepsize = fw4pde.stepsize.QuasiArmijoGoldstein(alpha=0.5, gamma=0.75)
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, 
+solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm, 
         stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()

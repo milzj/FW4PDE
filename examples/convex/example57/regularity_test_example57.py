@@ -1,7 +1,7 @@
 import fenics
 import numpy as np
 
-from stats import regularity_test
+from misc.stats import regularity_test
 
 n = 32
 beta = 0.001
