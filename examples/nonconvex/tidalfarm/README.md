@@ -43,6 +43,8 @@ and [Code for Simulations in Chapter 3 of Researchbrief](https://zenodo.org/reco
 
 The objective is to maximize overall profit, which is given by the revenue minus the total installation and maintenance costs of the turbine farm. The revenue is proportional to the turbine farm total power. The ratio of revenue and total power equals the turbine's average lifetime times a turbine efficieny coefficient timesd the income factor. The total installation and maintenance costs is the sum of the installation and maintenance costs over all turbines. 
 
+Instead of optimizing the number and positioning of potential turbines in the turbine farm, we are interested in obtaining a turbine density function. The turbine density function is proportional to the turbine friction, which we use as the control function.
+
 The optimization problem is formulated as
 
 $$
@@ -91,7 +93,7 @@ where $\rho$ is the water density. See also [power_functionals.py](https://githu
 The profit $J_{profit}$ to be maximized is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
 
 $$
-	J_{profit}(y, u) = \text{revenue}(y, u) - \text{cost}(u)  = I \cdot k \cdot T \cdot J_{\text{power}}(y, d) - C \int_{D} d(x) \mathrm{d} x,
+	J_{\text{profit}}(y, u) = \text{revenue}(y, u) - \text{cost}(u)  = I \cdot k \cdot T \cdot J_{\text{power}}(y, d) - C \int_{D} d(x) \mathrm{d} x,
 $$
 
 where $T$ is a turbine's average lifetime, $k \in (0,1)$ is a turbine efficiency coefficient, $I$ is an income factor, and $C$ is the cost of installing and maintaining one turbine. 
