@@ -7,7 +7,7 @@ using the conditional gradient method.
 
 ![](output/26-January-2023-12-12-15_solution_best_N=100_online_version.png)
 |:--:| 
-*Optimal turbine density*
+*Optimal turbine friction*
 
 Using the conditional gradient method, we can compute a tidal-stream farm layout
 which maximizes energy extraction. The setting used for this application is descriped
@@ -38,6 +38,75 @@ Chapter 3 of the book [T. Schwedes, D.A. Ham, S.W. Funke, and M.D. Piggott](http
 The implementation of the steady shallow water solver is based on
 that used in [OpenTidalFarm](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/master/opentidalfarm/solvers/coupled_sw_solver.py)
 and [Code for Simulations in Chapter 3 of Researchbrief](https://zenodo.org/record/224251).
+
+## Optimization problem
+
+The objective is to maximize overall profit, which is given by the revenue minus the total installation and maintenance costs of the turbine farm. The revenue is proportional to the turbine farm total power. The ratio of revenue and total power equals the turbine's average lifetime times a turbine efficieny coefficient timesd the income factor. The total installation and maintenance costs is the sum of the installation and maintenance costs over all turbines. 
+
+The optimization problem is formulated as
+
+$$
+	\min_{u \in U_{\text{ad}}}  J(S(u),u) + \beta \\|u\\|_{L^1(D)},
+$$
+
+where $u$ on $D_{\text{array}}$ is the turbine friction, $\beta \geq 0$ is a cost parameter, $S(u)$ is the solution to steady state shallow water equations (see [eqns. (3.5) and (3.35)](https://link.springer.com/book/10.1007/978-3-319-59483-5)), and 
+$U_{\text{ad}} = \\{ u \in L^2(D_{\text{array}}) : a \leq u \leq b \\}$ is the feasible set. Here $a = 0$
+is the minimum turbine friction and $b \approx 0.059$ is the maximum turbine friction.
+
+The turbine friction $c_t(d)$ is a nonnegative function of the turbine density function $d$ given by
+(see [eq. (3.9)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+
+$$
+	c_t(d) = (1/2) C_t A_t d.
+$$
+
+Here $C_t = 0.6$ (dimensionless) is the thrust coefficient and $A_t$ (in square meter) is the turbine cross section. The term $(1/2) C_t A_t$ is the total amount of a turbine's friction (see [model_turbine.py](https://zenodo.org/record/224251)). The maximum turbine friction $b$ is obtained via
+
+$$
+  b = (1/2) C_t A_t/(\text{minimum turbine distance})^2,
+$$
+
+where $\text{minimum turbine distance} = 40$ (in meter) is the minimum distance between turbines. Hence the maximum turbine density is $\text{minimum turbine distance}^2 = 6.25 \cdot 10^{-4}$.
+
+The turbine cross section $A_t$ is given by 
+
+$$
+	A_t = \pi \cdot (\text{blade radius})^2
+$$
+
+(see [model_turbine.py](https://zenodo.org/record/224251)). Here $\text{blade radius} = 10$.
+
+Using these definitions, we obtain [$b \approx 0.059$](https://www.wolframalpha.com/input?i=0.6*pi*10%5E2*0.5%2F40%2F40).
+
+We use $u=c_t(d)$, the turbine friction, as the control, not the turbine density $d$. 
+
+The power function $J_{\text{power}}$ is defined by (see [eq. (3.10)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+
+$$
+ J_{\text{power}}(y, d) = \int_{\text{array}} \rho c_t(d(x)) \|y(x)\|_2^3 \mathrm{d} x
+$$
+
+where $\rho$ is the water density. See also [power_functionals.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/master/opentidalfarm/functionals/power_functionals.py) and [steady_sw.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/ca1aa59ee17818dc3b1ab94a9cbc735527fb2961/opentidalfarm/problems/steady_sw.py#L60).
+
+The profit $J_{profit}$ to be maximized is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+
+$$
+	J_{profit}(y, u) = \text{revenue}(y, u) - \text{cost}(u)  = I \cdot k \cdot T \cdot J_{\text{power}}(y, d) - C \int_{D} d(x) \mathrm{d} x,
+$$
+
+where $T$ is a turbine's average lifetime, $k \in (0,1)$ is a turbine efficiency coefficient, $I$ is an income factor, and $C$ is the cost of installing and maintaining one turbine. 
+
+We obtain 
+
+$$
+	J(y,u) = - \int_{\text{array}} \rho u \|y(x)\|_2^3 \mathrm{d} x
+$$
+
+We use [$\beta = 4800$](https://www.wolframalpha.com/input?i=1*%281-0.4%29*1000*2%5E3) (see [cost_coefficient in model_turbine.py](https://zenodo.org/record/224251)).
+
+## Simulation output
+
+
 
 ## References
 
