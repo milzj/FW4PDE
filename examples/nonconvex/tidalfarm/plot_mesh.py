@@ -1,18 +1,25 @@
 
 from dolfin import *
+
 import matplotlib.pyplot as plt
+plt.rcParams['text.usetex'] = True
+
 from rectangle_domain import RectangularDomain
+from domain_parameters import DomainParameters
 
 
-x_max = 2000
-y_max = 1000
-N = 20
+domain_parameters = DomainParameters()
+x_min = domain_parameters.x_min
+x_max = domain_parameters.x_max
+y_min = domain_parameters.y_min
+y_max = domain_parameters.y_max
+n = 20
 
-domain = RectangularDomain(0, 0, x_max, y_max, nx=N, ny=N)
+domain = RectangularDomain(x_min, y_min, x_max, y_max, nx=n, ny=n)
 mesh = domain.mesh
 plot(mesh, title="Rectangle")
-plt.savefig("output/mesh.pdf")
-plt.savefig("output/mesh.png")
+plt.savefig("output/mesh_n={}.pdf".format(n))
+plt.savefig("output/mesh_n={}.png".format(n))
 
 
 class FarmDomain(SubDomain):
@@ -24,10 +31,9 @@ farm_domain = FarmDomain()
 domains = MeshFunction('size_t', mesh, mesh.topology().dim())
 domains.set_all(0)
 
-
 farm_domain.mark(domains, 1)
 site_dx = Measure("dx", domain=mesh, subdomain_data = farm_domain)
 plot(domains)
-plt.savefig("output/domains.png")
-plt.savefig("output/domains.pdf")
+plt.savefig("output/domains_n={}.png".format(n))
+plt.savefig("output/domains_n={}.pdf".format(n))
 plt.close()

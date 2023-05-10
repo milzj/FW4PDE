@@ -25,19 +25,19 @@ import matplotlib.pyplot as plt
 set_log_level(30)
 
 import fw4pde
+from solver_options import SolverOptions
 
 state = steady_sw(control)
 u, p = split(state)
 
+# sparsity parameter and box constraints
 WtoMW = 1e-6
-
 beta = WtoMW*4800.0
 lb = Constant(0.0)
 ub = Constant(0.059)
 
+# Objective function
 scaled_L1_norm = fw4pde.problem.ScaledL1Norm(control_space,beta)
-
-# power functional appears to be implemented in https://zenodo.org/record/224251
 power_functional = assemble(rho*control*inner(u,u)**1.5*site_dx(1))
 
 ctrl = Control(control)
@@ -49,21 +49,17 @@ u_moola = moola.DolfinPrimalVector(control)
 box_constraints = fw4pde.problem.BoxConstraints(control_space, lb, ub)
 moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-stepsize = fw4pde.stepsize.DecreasingStepSize()
-#stepsize = fw4pde.stepsize.DunnScalingStepSize()
-#stepsize = fw4pde.stepsize.DemyanovRubinovOptimalStepSize()
-#stepsize = fw4pde.stepsize.DemyanovRubinovAdaptiveStepSize()
-#stepsize = fw4pde.stepsize.DecreasingAdaptiveStepSize()
 
-gtol= 1e-4
-ftol = -np.inf
-maxiter = 10
-options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
+solver_options = SolverOptions()
+options = solver_options.options
+stepsize = solver_options.stepsize
 
 solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
                 stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
+
+# Postprocessing: Plotting and saving
 
 solution_final = sol["control_final"].data
 plt.set_cmap("coolwarm")

@@ -5,9 +5,9 @@ using the conditional gradient method.
 
 ## Graphical illustrations
 
-![](output/26-January-2023-12-12-15_solution_best_N=100_online_version.png)
+![](output/10-May-2023-13-44-27_solution_best_n=100_online_version.png)
 |:--:| 
-*Optimal turbine friction*
+*Optimal turbine density*
 
 Using the conditional gradient method, we can compute a tidal-stream farm layout
 which maximizes energy extraction. The setting used for this application is descriped
