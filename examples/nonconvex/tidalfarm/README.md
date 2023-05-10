@@ -20,7 +20,7 @@ in Chapter 3 of the book [T. Schwedes, D.A. Ham, S.W. Funke, and M.D. Piggott](h
 The figure illustrates the variables of the [shallow water equations](https://opentidalfarm.readthedocs.io/en/latest/examples/headland-optimization/headland-optimization.html).
 Here, 
 $y$ is the velocity, 
-$eta$ is the gree-surface displacement, 
+$\eta$ is the gree-surface displacement, 
 $h$ is the water depth at rest, and
 $H = \eta + h$ is the total water depth.
 
