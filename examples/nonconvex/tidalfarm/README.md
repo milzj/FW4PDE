@@ -41,6 +41,8 @@ and [Code for Simulations in Chapter 3 of Researchbrief](https://zenodo.org/reco
 
 ## Optimization problem
 
+The objective is to maximize overall profit, which is given by the revenue minus the total installation and maintenance costs of the turbine farm. The revenue is proportional to the turbine farm total power. The ratio of revenue and total power equals the turbine's average lifetime times a turbine efficieny coefficient timesd the income factor. The total installation and maintenance costs is the sum of the installation and maintenance costs over all turbines. 
+
 The optimization problem is formulated as
 
 $$
@@ -81,7 +83,7 @@ We use $u=c_t(d)$, the turbine friction, as the control, not the turbine density
 The power function $J_{\text{power}}$ is defined by (see [eq. (3.10)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
 
 $$
- J_{\text{power}}(y, u) = \int_{\text{array}} \rho u(x) \|y(x)\|_2^3 \mathrm{d} x
+ J_{\text{power}}(y, d) = \int_{\text{array}} \rho c_t(d(x)) \|y(x)\|_2^3 \mathrm{d} x
 $$
 
 where $\rho$ is the water density. See also [power_functionals.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/master/opentidalfarm/functionals/power_functionals.py) and [steady_sw.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/ca1aa59ee17818dc3b1ab94a9cbc735527fb2961/opentidalfarm/problems/steady_sw.py#L60).
@@ -89,7 +91,7 @@ where $\rho$ is the water density. See also [power_functionals.py](https://githu
 The profit $J_{profit}$ to be maximized is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
 
 $$
-	J_{profit}(y, u) = \text{revenue}(y, u) - \text{cost}(u)  = I \cdot k \cdot T \cdot J_{\text{power}}(y, u) - C \int_{D} d(x) \mathrm{d} x,
+	J_{profit}(y, u) = \text{revenue}(y, u) - \text{cost}(u)  = I \cdot k \cdot T \cdot J_{\text{power}}(y, d) - C \int_{D} d(x) \mathrm{d} x,
 $$
 
 where $T$ is a turbine's average lifetime, $k \in (0,1)$ is a turbine efficiency coefficient, $I$ is an income factor, and $C$ is the cost of installing and maintaining one turbine. 
@@ -97,12 +99,14 @@ where $T$ is a turbine's average lifetime, $k \in (0,1)$ is a turbine efficiency
 We obtain 
 
 $$
-	J(y,u) = - J_{\text{power}}(y, u).
+	J(y,u) = - \int_{\text{array}} \rho u \|y(x)\|_2^3 \mathrm{d} x
 $$
 
-We use [$\beta = 4800 = C/(I \cdot k \cdot T)$](https://www.wolframalpha.com/input?i=1*%281-0.4%29*1000*2%5E3) (see [cost_coefficient in model_turbine.py](https://zenodo.org/record/224251)).
+We use [$\beta = 4800$](https://www.wolframalpha.com/input?i=1*%281-0.4%29*1000*2%5E3) (see [cost_coefficient in model_turbine.py](https://zenodo.org/record/224251)).
 
-Note that the 
+## Simulation output
+
+
 
 ## References
 
