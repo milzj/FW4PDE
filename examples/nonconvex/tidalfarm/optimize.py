@@ -45,7 +45,7 @@ farm_domain = FarmDomain()
 farm_domain.mark(domains, 1)
 site_dx = Measure("dx", domain=mesh, subdomain_data = domains)
 
-# parameters
+# parameters (see Table 3.4 in https://link.springer.com/book/10.1007/978-3-319-59483-5)
 depth = Constant(50.0)
 viscosity = Constant(5.0)
 C_t = Constant(0.6)
@@ -53,7 +53,7 @@ A_t = Constant(314.15)
 friction = Constant(0.0025)
 g = Constant(9.81)
 f_u = Constant((0, 0))
-rho = 1025.0
+rho = 1025.0 # https://github.com/OpenTidalFarm/OpenTidalFarm/blob/ca1aa59ee17818dc3b1ab94a9cbc735527fb2961/opentidalfarm/problems/steady_sw.py#L60
 
 # function spaces
 V_h = VectorElement("CG", mesh.ufl_cell(), 2)
@@ -183,15 +183,15 @@ u_moola = moola.DolfinPrimalVector(control)
 box_constraints = fw4pde.problem.BoxConstraints(control_space, lb, ub)
 moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-#stepsize = fw4pde.stepsize.DecreasingStepSize()
-stepsize = fw4pde.stepsize.DunnScalingStepSize()
+stepsize = fw4pde.stepsize.DecreasingStepSize()
+#stepsize = fw4pde.stepsize.DunnScalingStepSize()
 #stepsize = fw4pde.stepsize.DemyanovRubinovOptimalStepSize()
-stepsize = fw4pde.stepsize.DemyanovRubinovAdaptiveStepSize()
+#stepsize = fw4pde.stepsize.DemyanovRubinovAdaptiveStepSize()
 #stepsize = fw4pde.stepsize.DecreasingAdaptiveStepSize()
 
 gtol= 1e-4
 ftol = -np.inf
-maxiter = 10
+maxiter = 100
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
 solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
@@ -201,6 +201,7 @@ sol = solver.solve()
 
 
 solution_final = sol["control_final"].data
+plt.set_cmap("coolwarm")
 c = plot(solution_final)
 plt.colorbar(c)
 plt.savefig("output/solution_final_N_{}.pdf".format(N))
