@@ -21,3 +21,13 @@ class SolverOptions(object):
     def stepsize(self):
         "Step size rule for conditional gradient method."
         return self._stepsize
+
+    def __str__(self):
+        s = """ Termination options: {}, \n Step size rule: {}
+            """.format(self.options, self.stepsize)
+        return s
+
+
+if __name__ == "__main__":
+    solver_options = SolverOptions()
+    print(solver_options)

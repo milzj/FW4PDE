@@ -5,6 +5,7 @@ from domain import *
 from rectangle_domain import RectangularDomain
 from tidal_parameters import TidalParameters
 from domain_parameters import DomainParameters
+from boundary_conditions import BoundaryConditionSet
 
 
 domain_parameters = DomainParameters()
@@ -50,7 +51,6 @@ initial_condition = Constant(("1e-7", "0.0", "0.0"))
 
 
 # boundary conditions
-from boundary_conditions import BoundaryConditionSet
 bcs = BoundaryConditionSet()
 bcs.add_bc("u", Constant((2.0,0.0)), facet_id=1, bctype="strong_dirichlet")
 bcs.add_bc("eta", Constant(0.0), facet_id=2, bctype="strong_dirichlet")

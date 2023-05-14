@@ -90,7 +90,7 @@ $$
 
 where $\rho$ is the water density. See also [power_functionals.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/master/opentidalfarm/functionals/power_functionals.py) and [steady_sw.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/ca1aa59ee17818dc3b1ab94a9cbc735527fb2961/opentidalfarm/problems/steady_sw.py#L60).
 
-The profit $J_{profit}$ to be maximized is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+The profit $J_{\text{profit}}$ to be maximized is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
 
 $$
 	J_{\text{profit}}(y, d) = \text{revenue}(y, d) - \text{cost}(u)  = I \cdot k \cdot T \cdot J_{\text{power}}(y, d) - C \int_{D} d(x) \mathrm{d} x,

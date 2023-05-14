@@ -32,7 +32,8 @@ u, p = split(state)
 
 # sparsity parameter and box constraints
 WtoMW = 1e-6
-beta = WtoMW*4800.0
+cost_coefficient = 4800.0
+beta = WtoMW*cost_coefficient
 lb = Constant(0.0)
 ub = Constant(0.059)
 
@@ -88,3 +89,24 @@ file = File(outdir + "/" + "solution" +  "_best_n={}".format(domain_parameters.n
 file << solution_best
 file = File(outdir + "/" + "solution" +  "_final_n={}".format(domain_parameters.n) + ".pvd")
 file << solution_final
+
+
+# Compute and print results (source: https://zenodo.org/record/224251)
+
+site_area = assemble(Constant(1.0)*site_dx(1))
+power = -problem.obj(sol["control_best"])
+total_friction = assemble(solution_best*site_dx(1))
+cost = cost_coefficient * total_friction
+friction = 0.5*parameters.thrust_coefficient*parameters.turbine_cross_section # see model_turbine.py https://zenodo.org/record/224251
+
+print("="*40)
+print("Site area (m^2): {}".format(site_area))
+print("Cost coefficient: {}".format(cost_coefficient))
+print("Total power: %e" % power)
+print("Total cost: %e" % cost)
+print("Total turbine friction: %e" % total_friction)
+print("Average smeared turbine friction: %e" % (total_friction / site_area))
+print("Total power / total friction: %e" % (power / total_friction))
+print("Friction per discrete turbine: {}".format(friction))
+print("Estimated number of discrete turbines: {}".format(total_friction/friction))
+print("Estimated average power per turbine: {}".format(power / (total_friction/friction)))
