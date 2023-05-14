@@ -27,12 +27,12 @@ site_dx = Measure("dx", domain=mesh, subdomain_data = domains)
 
 # Parameters
 parameters = TidalParameters()
-depth = Constant(parameters.depth)
-viscosity = Constant(parameters.viscosity)
-C_t = Constant(parameters.thrust_coefficient)
-A_t = Constant(parameters.turbine_cross_section)
-friction = Constant(parameters.bottom_friction)
-g = Constant(parameters.gravity)
+depth = parameters.depth
+viscosity = parameters.viscosity
+C_t = parameters.thrust_coefficient
+A_t = parameters.turbine_cross_section
+friction = parameters.bottom_friction
+g = parameters.gravity
 rho = parameters.water_density
 f_u = parameters.source_term
 initial_condition = parameters.initial_condition

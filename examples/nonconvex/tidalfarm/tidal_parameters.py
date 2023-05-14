@@ -6,13 +6,16 @@ class TidalParameters(object):
 
     def __init__(self):
 
-        self._bottom_friction = 0.0025
-        self._viscosity = 5.0
+        self._bottom_friction = Constant(0.0025)
+        self._viscosity = Constant(5.0)
+        self._depth = Constant(50.0)
+        self._thrust_coefficient = Constant(0.6)
+        self._turbine_cross_section = Constant(314.15)
 
     @property
     def depth(self):
         "h"
-        return 50.0
+        return self._depth
 
     @property
     def viscosity(self):
@@ -26,12 +29,12 @@ class TidalParameters(object):
     @property
     def thrust_coefficient(self):
         "C_t"
-        return 0.6
+        return self._thrust_coefficient
 
     @property
     def turbine_cross_section(self):
         "A_t"
-        return 314.15
+        return self._turbine_cross_section
 
     @property
     def bottom_friction(self):
@@ -45,7 +48,7 @@ class TidalParameters(object):
     @property
     def gravity(self):
         "g"
-        return 9.81
+        return Constant(9.81)
 
     @property
     def water_density(self):
