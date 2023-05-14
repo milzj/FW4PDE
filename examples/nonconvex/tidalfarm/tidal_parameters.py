@@ -64,7 +64,7 @@ class TidalParameters(object):
 
     @property
     def source_term(self):
-        """PDE source term."""
+        """PDE source term f_u"""
         return Constant((0.0, 0.0))
 
 
@@ -77,9 +77,9 @@ Turbine cross section: {}
 Natural bottom friction: {}
 Gravity: {}
 Water density: {}
-            """.format(self.depth, self.viscosity,
-                    self.thrust_coefficient, self.turbine_cross_section,
-                    self.bottom_friction, self.gravity, self.water_density)
+            """.format(self.depth.values()[0], self.viscosity.values()[0],
+                    self.thrust_coefficient.values()[0], self.turbine_cross_section.values()[0],
+                    self.bottom_friction.values()[0], self.gravity.values()[0], self.water_density)
         return s
 
 

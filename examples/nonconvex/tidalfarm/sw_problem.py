@@ -1,6 +1,0 @@
-
-
-class SteadySWProblem(object):
-
-
-
