@@ -106,6 +106,9 @@ $$
 
 We use [$\beta = 4800$](https://www.wolframalpha.com/input?i=1*%281-0.4%29*1000*2%5E3) (see [cost_coefficient in model_turbine.py](https://zenodo.org/record/224251)).
 
+
+The farm site's area is [150000 m^2](https://www.wolframalpha.com/input?i=%28650-350%29*%281250-750%29).
+
 ## Simulation output
 
 

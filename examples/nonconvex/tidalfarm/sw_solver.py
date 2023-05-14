@@ -1,13 +1,13 @@
 from dolfin import *
 from dolfin_adjoint import *
 
-from domain import *
-from rectangle_domain import RectangularDomain
+from base import RectangularDomain
+from base import BoundaryConditionSet
 from tidal_parameters import TidalParameters
 from domain_parameters import DomainParameters
-from boundary_conditions import BoundaryConditionSet
+from farm_domain import FarmDomain
 
-
+# Computational domain
 domain_parameters = DomainParameters()
 x_min = domain_parameters.x_min
 x_max = domain_parameters.x_max
@@ -18,15 +18,12 @@ n = domain_parameters.n
 domain = RectangularDomain(x_min, y_min, x_max, y_max, nx=n, ny=n)
 mesh = domain.mesh
 
-class FarmDomain(SubDomain):
-    def inside(self, x, on_boundary):
-        return between(x[0], (0.375*x_max, 0.625*x_max)) and between(x[1], (0.35*y_max, 0.65*y_max))
-
 domains = MeshFunction('size_t', mesh, mesh.topology().dim())
 domains.set_all(0)
-farm_domain = FarmDomain()
+farm_domain = FarmDomain(x_max=x_max, y_max=y_max)
 farm_domain.mark(domains, 1)
 site_dx = Measure("dx", domain=mesh, subdomain_data = domains)
+
 
 # Parameters
 parameters = TidalParameters()
@@ -37,18 +34,16 @@ A_t = Constant(parameters.turbine_cross_section)
 friction = Constant(parameters.bottom_friction)
 g = Constant(parameters.gravity)
 rho = parameters.water_density
-f_u = Constant((0, 0))
+f_u = parameters.source_term
+initial_condition = parameters.initial_condition
 
 # function spaces
 V_h = VectorElement("CG", mesh.ufl_cell(), 2)
 Q_h = FiniteElement("CG", mesh.ufl_cell(), 1)
 W = FunctionSpace(mesh, V_h*Q_h)
 
-control_space = FunctionSpace(domain.mesh, "DG", 0)
+control_space = FunctionSpace(mesh, "DG", 0)
 control = Function(control_space)
-
-initial_condition = Constant(("1e-7", "0.0", "0.0"))
-
 
 # boundary conditions
 bcs = BoundaryConditionSet()
@@ -93,7 +88,7 @@ def steady_sw(control):
     H = h_mid + depth
 
     # The normal direction
-    n = FacetNormal(domain.mesh)
+    n = FacetNormal(mesh)
 
     # Divergence term.
     Ct_mid = -H * inner(u_mid, grad(q)) * dx

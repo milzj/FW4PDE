@@ -13,7 +13,7 @@ x_min = domain_parameters.x_min
 x_max = domain_parameters.x_max
 y_min = domain_parameters.y_min
 y_max = domain_parameters.y_max
-n = 20
+n = 100
 
 domain = RectangularDomain(x_min, y_min, x_max, y_max, nx=n, ny=n)
 mesh = domain.mesh
@@ -32,7 +32,10 @@ domains = MeshFunction('size_t', mesh, mesh.topology().dim())
 domains.set_all(0)
 
 farm_domain.mark(domains, 1)
-site_dx = Measure("dx", domain=mesh, subdomain_data = farm_domain)
+site_dx = Measure("dx", domain=mesh, subdomain_data = domains)
+site_area = assemble(Constant(1.0)*site_dx(1))
+print("Site area (m^2): {}".format(site_area))
+
 plot(domains)
 plt.savefig("output/domains_n={}.png".format(n))
 plt.savefig("output/domains_n={}.pdf".format(n))

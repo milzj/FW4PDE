@@ -1,3 +1,5 @@
+from dolfin import *
+from dolfin_adjoint import *
 
 class TidalParameters(object):
     # parameters (see Table 3.4 in https://link.springer.com/book/10.1007/978-3-319-59483-5)
@@ -49,6 +51,19 @@ class TidalParameters(object):
     def water_density(self):
         "rho"
         return 1025.0 # https://github.com/OpenTidalFarm/OpenTidalFarm/blob/ca1aa59ee17818dc3b1ab94a9cbc735527fb2961/opentidalfarm/problems/steady_sw.py#L60
+
+    @property
+    def initial_condition(self):
+        """State initial conditions for SW solver
+        source: https://zenodo.org/record/224251
+        """
+        return Constant(("1e-7", "0.0", "0.0"))
+
+    @property
+    def source_term(self):
+        """PDE source term."""
+        return Constant((0.0, 0.0))
+
 
     def __str__(self):
         s = """

@@ -14,11 +14,12 @@ Changes
 - Added dolfin adjoint import
 """
 
-
 import os.path
+
 from dolfin import *
 from dolfin_adjoint import *
-from domain import Domain
+
+from .domain import Domain
 
 class RectangularDomain(Domain):
     """ Create a rectangular domain.
