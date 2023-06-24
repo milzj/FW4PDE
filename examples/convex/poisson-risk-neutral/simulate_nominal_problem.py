@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 
 set_log_level(30)
 
-from algorithms import FrankWolfe, MoolaBoxLMO
-from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein
+import fw4pde
 
 import os
 
@@ -45,14 +43,13 @@ problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
 with stop_annotating():
-    scaled_L1_norm = ScaledL1Norm(U,beta)
-    box_constraints = BoxConstraints(U, lb, ub)
-    moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+    scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta)
+    box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
+    moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+    stepsize = fw4pde.stepsize.QuasiArmijoGoldstein(gamma=0.75)
 
-    stepsize = QuasiArmijoGoldstein(gamma=0.75)
 
-
-    solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,
+    solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,
             stepsize=stepsize, lmo=moola_box_lmo, options=solver_options)
 
     sol = solver.solve()

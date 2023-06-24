@@ -21,10 +21,12 @@ class TruncatedGaussianSampler(object):
 
         a, b = self.rv_range
         std = self.std
+        loc = 0.0
 
         self.bump_seed()
         np.random.seed(self.seed)
-        Z = truncnorm.rvs(a/std, b/std, loc=0.0, scale=std, size=num_rvs)
+        a_, b_ = (a - loc) / std, (b - loc) / std
+        Z = truncnorm.rvs(a_, b_, loc=0.0, scale=std, size=num_rvs)
 
         return Z
 

@@ -2,7 +2,7 @@ class DecreasingAdaptiveStepSize(object):
 
     def __str__(self):
 
-        s = "Fixed step size.\n"
+        s = "Decreasing step size with 'adaptivity'.\n"
 
         return s
 
@@ -15,15 +15,13 @@ class DecreasingAdaptiveStepSize(object):
 
         val_decreasing = obj(u_new) + nonsmooth_obj(u_new.data)
         val_step = obj(v) + nonsmooth_obj(v.data)
-        print("val_step={}".format(val_step))
-        print("val_decreasing={}".format(val_decreasing))
+
         if val_step <= val_decreasing:
             u.assign(v)
             s = 1.0
         else:
             u.assign(u_new)
             obj(u)
-
 
         return s, 0
 

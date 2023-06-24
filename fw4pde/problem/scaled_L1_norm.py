@@ -1,4 +1,4 @@
-from base import NormL1
+from fw4pde.base import NormL1
 
 class ScaledL1Norm(object):
 

@@ -1,0 +1,210 @@
+\documentclass{scrartcl}
+
+
+\usepackage{scrhack}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumitem}
+
+\usepackage{hyperref}
+
+\title{Adaptive step sizes for conditional gradient methods}
+
+
+\author{Johannes Milz}
+
+
+\date{January 22, 2023}
+
+\begin{document}
+	
+	\maketitle
+	
+	We establish convergence rates for step size adaptive conditional
+	gradient methods as applied to nonconvex, smooth optimization.
+	These step size rules are implemented in 
+	\url{https://github.com/milzj/FW4PDE}.
+	
+	We use the same notation and assumptions 
+	as those used in \cite[sect.\ 7.3]{Lan2020}. 
+	Moreover, we define $y_k(\alpha) = (1-\alpha)y_{k-1} + \alpha x_k$.
+	Throughout the text, we use the fact that $\mathrm{gap}(y_{k-1}) \geq 0$.
+	
+	\paragraph{Adaptive ``estimation'' of derivative's Lipschitz constant}
+	We compute the step size$\alpha_k \in [0,1]$ according to the following
+	scheme inspired by the line search-type scheme used in \cite{Nesterov2006}
+	(see also \cite{Pedregosa2018,Pedregosa2020}).
+	Let $f'$ be $\|\cdot\|$-Lipschitz continuous with Lipschitz
+	constant $L$. Moreover, let $L_{-1} \leq L$.
+	\begin{enumerate}
+		\item 
+		Compute $\alpha_k^*$ via minimizing
+		the model function
+		\begin{align*}
+			\phi_k(\alpha) = 
+			f(y_{k-1}) - \alpha \mathrm{gap}(y_{k-1})
+			+ \alpha^2(L_k/2) \|x_k -y_{k-1}\|^2
+		\end{align*}
+		over $[0,1]$.
+		
+		\item If 
+		\begin{align*}
+			f(y_k(\alpha_k^*)) \leq  \phi_k(\alpha_k^*),
+		\end{align*}
+		then define $y_k = y_k(\alpha_k^*)$
+		and $L_{k+1}  = \max\{L_{-1},L_k/2\}$.
+		Otherwise, define $L_{k} = 2L_k$ and go to the first step.
+	\end{enumerate}
+	For each iteration $k$, we have $L_{-1} \leq L_k \leq 2L$.
+	
+	If $\|x_k -y_{k-1}\| = 0$, then $\mathrm{gap}(y_{k-1}) = 0$.
+	In this case $\alpha_k^*= 0$. Otherwise`
+	\begin{align*}
+		\alpha_k^* = \min\{1, \frac{\mathrm{gap}(y_{k-1})}{L_k\|x_k -y_{k-1}\|^2}\} 
+	\end{align*}
+	The choice of $L_k$ ensures that
+	$0 < 1/(2L) \leq 1/L_k \leq 1/L_{-1}$.
+	So the setting
+	presented here differs from that considered in \cite[p.\ 24]{Levitin1966}.
+
+
+	Otherwise, 
+	\begin{align*}
+		f(y_{k}) \leq f(y_{k-1}) 
+		- \frac{\mathrm{gap}(y_{k-1})^2}{2L_k \|x_k -y_{k-1}\|^2}.
+	\end{align*}
+	Since $\|x_k -y_{k-1}\| \leq \bar{D}_{X}$ and $2L \geq L_k$, we obtain
+	\begin{align*}
+		\frac{\mathrm{gap}(y_{k-1})^2}{4L\bar{D}_{X}^2}
+		\leq 
+		\frac{\mathrm{gap}(y_{k-1})^2}{2L_k \|x_k -y_{k-1}\|^2}
+		\leq f(y_{k-1})  - f(y_k).
+	\end{align*}
+	Hence
+	\begin{align*}
+		\sum_{k=1}^{K} \mathrm{gap}(y_{k-1})^2
+		\leq 4 L \bar{D}_{X}^2(f(y_0)-f(y_K)).
+	\end{align*}
+	Hence $\mathrm{gap}(y_{k-1}) \to 0$ as $k \to \infty$ and
+	\begin{align*}
+		\min_{1\leq k \leq K}\, \mathrm{gap}(y_{k-1}) 
+		\leq \sqrt{\frac{4 L \bar{D}_{X}^2(f(y_0)-f^*)}{K}}.
+	\end{align*}
+	This bound is slightly worse to that established in \cite[p.\ 469]{Lan2020}
+	with $\alpha_k$ chosen proportional to $1/\sqrt{k}$.
+	However, $\alpha_k^*$ may take values close or equal to one.
+	
+	\paragraph{quasi-Armijo--Goldstein line search}
+	We follow \cite[Def.\ 3.2]{Kunisch2022}. Let $\gamma \in (0,1)$ and 
+	$\rho \in (0,1/2]$. We compute $\alpha_k = \gamma^{n_k}$,
+	where $n_k \in \{0\} \cup \mathbb{N}$ is the smallest integer with
+	\begin{align*}
+		f(y_k(\alpha_k)) \leq f(y_{k-1}) - \rho \alpha_k \mathrm{gap}(y_{k-1}).
+	\end{align*} 
+	Subsequently, we define $y_k = y_k(\alpha_k)$.
+	
+
+
+	Using the $\|\cdot\|$-Lipschitz continuity of $f'$ and the derivations in 
+	\cite[p.\ 469]{Lan2020}, we obtain
+	\begin{align*}
+		f(y_k(\gamma^{-1}\alpha_k)) \leq f(y_{k-1}) - 
+		\gamma^{-1}\alpha_k \mathrm{gap}(y_{k-1})
+		+ \alpha_k^2 \gamma^{-2} (L/2) \bar{D}_X^2.
+	\end{align*}
+	Using the Armijo--Goldstein condition, we have
+	\begin{align*}
+		f(y_k(\gamma^{-1}\alpha_k)) > f(y_{k-1}) - \rho \gamma^{-1}
+		\alpha_k \mathrm{gap}(y_{k-1}).
+	\end{align*}
+	Combining these estimates, we obtain
+	\begin{align*}
+		f(y_{k-1}) - \rho \gamma^{-1}
+		\alpha_k \mathrm{gap}(y_{k-1}) < 
+		f(y_{k-1}) - 
+		\gamma^{-1}\alpha_k \mathrm{gap}(y_{k-1})
+		+ \alpha_k^2 \gamma^{-2} (L/2) \bar{D}_X^2.
+	\end{align*}
+	Hence
+	\begin{align*}
+		\mathrm{gap}(y_{k-1}) \cdot (1-\rho) < 
+		\alpha_k\gamma^{-1} (L/2) \bar{D}_X^2.
+	\end{align*}
+	Using the Armijo--Goldstein condition, we have
+	\begin{align*}
+		f(y_{k-1}) - f(y_k) \geq  \rho \alpha_k \mathrm{gap}(y_{k-1}).
+	\end{align*}
+	Combining the estimates, we obtain
+	\begin{align*}
+		f(y_{k-1}) - f(y_k) \geq  
+		\frac{2\rho(1-\rho)\gamma}{L\bar{D}_X^2}
+		\mathrm{gap}(y_{k-1})^2
+	\end{align*}
+	Hence
+	\begin{align*}
+		\min_{1\leq k \leq K}\, \mathrm{gap}(y_{k-1}) 
+		\leq 
+		\sqrt{\frac{L\bar{D}_X^2(f(y_0)-f^*)}{2\rho(1-\rho)\gamma \cdot K}}.
+	\end{align*}
+	
+	\paragraph{Using a second-order Taylor's expansion
+	and minimization rule}
+	
+	If $f$ is twice differentiable and quadratic,
+	and computing the second derivative of $f$
+	(in the directions $x_k-y_{k-1}$)
+	is computationally feasible, then we use the minimization rule to compute
+	the optimal step size $\alpha_k$.
+
+	If $f$ is twice differentiable, we have
+	\begin{align*}
+		f(y_k(\alpha)) \approx f(y_{k-1}) - \alpha \mathrm{gap}(y_{k-1})
+		+ \alpha^2 (1/2) f''(y_{k-1})[x_k-y_{k-1}]^2.
+	\end{align*}
+	If $\approx$ is $\leq$, then $\alpha_k$ computed using 
+	the minimization rule should yield a convergent method.
+	Whether $\leq$ nor not can be verified computationally. 
+	
+	If $\approx$ is $\geq 0$, then $\alpha_k$ computed using 
+	the minimization rule may be a poor choice. 
+	We may use regularization of $f''$, use an offline choice
+	for $\alpha_k$, or use an Armijo step size. 
+	The step size computed using minimization rule should be better than 
+	a step size computed using Armijo rule.
+	
+
+	However, as long as for some $\rho \in (0,1)$, 
+	\begin{align*}
+		\sum_{k=1}^K \rho \alpha_k \mathrm{gap}(y_{k-1})
+		\leq f(y_0) - f(y_K)
+	\end{align*}
+	we should be fine. This estimate allows for nonmonotone
+	function values.
+	
+	
+	Alternative approach
+	\begin{enumerate}
+		\item Compute $\alpha_k^*$ using minimization rule applied
+		to quadratic model.
+		\item Check if 
+		$f(y_k(\alpha_k^*)) \leq $
+		quadratic model evaluated at 
+		$\alpha_k^*$.
+		If it fails, use  quasi-Armijo--Goldstein step size 
+		(starting with largest
+		$n_k$ such that $\gamma^{n_k} \leq \alpha_k^*$.
+		Choose small $\rho > 0$.)
+	\end{enumerate}
+	
+	
+	
+	
+	\bibliographystyle{myplainurl}
+	\bibliography{lit}
+	
+\end{document}

@@ -10,12 +10,7 @@ import matplotlib.pyplot as plt
 
 set_log_level(30)
 
-from algorithms import FrankWolfe, MoolaBoxLMO
-from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein, DecreasingStepSize
-from stepsize import DunnHarshbargerStepSize, DunnScalingStepSize
-
-
+import fw4pde
 
 lb = Constant(0.0)
 ub = Constant(1.0)
@@ -36,7 +31,7 @@ mesh = UnitSquareMesh(n,n)
 U = FunctionSpace(mesh, "DG", 0)
 V = FunctionSpace(mesh, "CG", 1)
 
-scaled_L1_norm = ScaledL1Norm(U,beta)
+scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta)
 
 u = Function(U)
 y = Function(V)
@@ -74,17 +69,14 @@ rf = ReducedFunctional(J, control)
 problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
-box_constraints = BoxConstraints(U, lb, ub)
-moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
+moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-stepsize = QuasiArmijoGoldstein(gamma=0.8)
-#stepsize = DunnScalingStepSize()
-#stepsize = DecreasingStepSize()
-#stepsize = DunnHarshbargerStepSize()
+stepsize = fw4pde.stepsize.QuasiArmijoGoldstein(gamma=0.8)
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
+solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
                 stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()

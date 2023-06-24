@@ -53,20 +53,21 @@ fig, ax = plt.subplots(4, 1)
 
 N = 100000
 nbins = 50
-sigma = 2.0
+sigma = 3.0
+loc = 10.
 
 # compare w/ the Notes in https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.truncnorm.html
-a = -100.0/sigma
-b = 100.0/sigma
+a = (-100.0 -loc)/sigma
+b = (100.0-loc)/sigma
 
 # random samples from truncated normal distribution
-r = truncnorm.rvs(a, b, scale=sigma, size=N)
+r = truncnorm.rvs(a, b, loc=loc, scale=sigma, size=N)
 ax[0].hist(r, density=True, histtype='stepfilled', alpha=0.2, bins=nbins)
 ax[0].set_title("truncated normal variables")
 
 
 # random samples from truncated distribution
-r = sigma*np.random.randn(N)
+r = loc + sigma*np.random.randn(N)
 ax[1].hist(r, density=True, histtype='stepfilled', alpha=0.2, bins=nbins)
 ax[1].set_title("normal variables")
 
@@ -74,7 +75,7 @@ ax[1].set_title("normal variables")
 sampler = qmc.Sobol(d=1, scramble=True, seed=1234)
 m = 15
 q = sampler.random_base2(m=m)
-s = truncnorm.ppf(q, a, b, loc=0, scale=sigma)
+s = truncnorm.ppf(q, a, b, loc=loc, scale=sigma)
 ax[2].hist(s, density=True, histtype='stepfilled', alpha=0.2, bins=nbins)
 ax[2].set_title("truncated normal variables via ppf (w/ scrambled Sobol')")
 
@@ -85,7 +86,7 @@ q = q + 1/(2*2**m)
 
 assert np.all(q < 1.0), "Invalid shift of Sobol' sequence."
 
-s = truncnorm.ppf(q, a, b, loc=0, scale=sigma)
+s = truncnorm.ppf(q, a, b, loc=loc, scale=sigma)
 ax[3].hist(s, density=True, histtype='stepfilled', alpha=0.2, bins=nbins)
 ax[3].set_title("truncated normal variables via ppf (w/ shifted Sobol')")
 
