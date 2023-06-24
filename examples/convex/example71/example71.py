@@ -11,9 +11,7 @@ import matplotlib.pyplot as plt
 
 set_log_level(30)
 
-from algorithms import FrankWolfe, MoolaBoxLMO
-from problem import ScaledL1Norm, BoxConstraints
-from stepsize import DunnHarshbargerStepSize
+import fw4pde
 
 
 from desired_state import example71_desired_state
@@ -27,7 +25,6 @@ n = 500
 yd_str, _, _ = example71_desired_state(n=n)
 yd_expr = Expression(yd_str, degree=3)
 
-
 maxiter = 1000
 gtol = 1e-6
 ftol = 1e-6
@@ -38,7 +35,7 @@ V = FunctionSpace(mesh, "CG", 1)
 
 yd = yd_expr
 
-scaled_L1_norm = ScaledL1Norm(U,beta)
+scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta)
 
 u = Function(U)
 y = Function(V)
@@ -56,14 +53,14 @@ rf = ReducedFunctional(J, control)
 problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
-box_constraints = BoxConstraints(U, lb, ub)
-moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
+moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-stepsize = DunnHarshbargerStepSize()
+stepsize = fw4pde.stepsize.DunnHarshbargerStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
+solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
             stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()

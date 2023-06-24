@@ -5,9 +5,9 @@ using the conditional gradient method.
 
 ## Graphical illustrations
 
-![](output/26-January-2023-12-12-15_solution_best_N=100_online_version.png)
+![](output/10-May-2023-13-44-27_solution_best_n=100_online_version.png)
 |:--:| 
-*Optimal turbine friction*
+*Optimal turbine density*
 
 Using the conditional gradient method, we can compute a tidal-stream farm layout
 which maximizes energy extraction. The setting used for this application is descriped
@@ -20,7 +20,7 @@ in Chapter 3 of the book [T. Schwedes, D.A. Ham, S.W. Funke, and M.D. Piggott](h
 The figure illustrates the variables of the [shallow water equations](https://opentidalfarm.readthedocs.io/en/latest/examples/headland-optimization/headland-optimization.html).
 Here, 
 $y$ is the velocity, 
-$eta$ is the gree-surface displacement, 
+$\eta$ is the gree-surface displacement, 
 $h$ is the water depth at rest, and
 $H = \eta + h$ is the total water depth.
 
@@ -90,7 +90,7 @@ $$
 
 where $\rho$ is the water density. See also [power_functionals.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/master/opentidalfarm/functionals/power_functionals.py) and [steady_sw.py](https://github.com/OpenTidalFarm/OpenTidalFarm/blob/ca1aa59ee17818dc3b1ab94a9cbc735527fb2961/opentidalfarm/problems/steady_sw.py#L60).
 
-The profit $J_{profit}$ to be maximized is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
+The profit $J_{\text{profit}}$ to be maximized is defined by (see [eq. (3.11)](https://link.springer.com/book/10.1007/978-3-319-59483-5))
 
 $$
 	J_{\text{profit}}(y, d) = \text{revenue}(y, d) - \text{cost}(u)  = I \cdot k \cdot T \cdot J_{\text{power}}(y, d) - C \int_{D} d(x) \mathrm{d} x,
@@ -105,6 +105,9 @@ $$
 $$
 
 We use [$\beta = 4800$](https://www.wolframalpha.com/input?i=1*%281-0.4%29*1000*2%5E3) (see [cost_coefficient in model_turbine.py](https://zenodo.org/record/224251)).
+
+
+The farm site's area is [150000 m^2](https://www.wolframalpha.com/input?i=%28650-350%29*%281250-750%29).
 
 ## Simulation output
 

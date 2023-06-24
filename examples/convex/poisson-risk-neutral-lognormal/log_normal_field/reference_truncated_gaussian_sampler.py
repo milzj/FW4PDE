@@ -13,6 +13,7 @@ class ReferenceTruncatedGaussianSampler(object):
 
         std = self.std
         a, b = self.rv_range
+        loc = 0.0
 
         m = base2_exp
 
@@ -22,7 +23,8 @@ class ReferenceTruncatedGaussianSampler(object):
 
         assert np.all(q < 1.0), "Invalid shift of Sobol' sequence."
 
-        s = truncnorm.ppf(q, a/std, b/std, loc=0, scale=std)
+        a_, b_ = (a - loc) / std, (b - loc) / std
+        s = truncnorm.ppf(q, a_, b_, loc=0, scale=std)
         return s
 
 
