@@ -1,12 +1,11 @@
-.PowerFolder/
+*.sav
 *.pdf
 *.png
 *.zip
 *.out
+/notes
 
 *.swp
-
-old/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
