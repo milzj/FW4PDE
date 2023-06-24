@@ -30,20 +30,18 @@ import matplotlib.pyplot as plt
 
 set_log_level(30)
 
-from algorithms import FrankWolfe, MoolaBoxLMO
-from problem import ScaledL1Norm, BoxConstraints
-from stepsize import DemyanovRubinovOptimalStepSize
+import fw4pde
 
 lb = Constant(-1.0)
 ub = Constant(1.0)
 
 beta = .0
-n = 2**5
+n = 2**8
 
 maxiter = 100
 
-gtol = 1e-12
-ftol = 1e-12
+gtol = 1e-8
+ftol = 1e-8
 mesh = UnitIntervalMesh(n)
 
 tol = 1e-13
@@ -82,17 +80,23 @@ yd2 = Expression("{}".format(yd2), degree = 2, pi=np.pi)
 # Check if subdomain works
 assert np.isclose(assemble(yd1*dx), assemble(yd1*dx(1)) + assemble(yd1*dx(2)), rtol=tol)
 
-scaled_L1_norm = ScaledL1Norm(U,beta)
+scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta)
 
 u = Function(U)
-y = Function(V)
+
+w = TrialFunction(V)
 v = TestFunction(V)
 
-F = (inner(grad(y), grad(v)) - u * v) * dx
 bc = DirichletBC(V, 0.0, "on_boundary")
-solve(F == 0, y, bc)
+a = inner(grad(w), grad(v)) * dx
+L = u * v * dx
 
-#J = assemble(0.5*inner(y-yd,y-yd)*dx)
+A, b = assemble_system(a, L, bc)
+solver = LUSolver(A, "petsc")
+
+y = Function(V)
+solver.solve(y.vector(), b)
+
 J = assemble(0.5*inner(y-yd1,y-yd1)*dx(1) + 0.5*inner(y-yd2,y-yd2)*dx(2))
 
 control = Control(u)
@@ -101,14 +105,14 @@ rf = ReducedFunctional(J, control)
 problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
-box_constraints = BoxConstraints(U, lb, ub)
-moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
+moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-stepsize = DemyanovRubinovOptimalStepSize()
+stepsize = fw4pde.stepsize.DemyanovRubinovOptimalStepSize()
 
 options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
-solver = FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
+solver = fw4pde.algorithms.FrankWolfe(problem, initial_point=u_moola, nonsmooth_functional=scaled_L1_norm,\
                 stepsize=stepsize, lmo=moola_box_lmo, options=options)
 
 sol = solver.solve()
