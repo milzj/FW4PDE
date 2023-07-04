@@ -170,7 +170,7 @@ class FrankWolfe(object):
             if objective_final < objective_best:
 
                 self.data.update({"control_best": u})
-                self.data.update({"gradient_best": gradient})
+                self.data.update({"gradient_final": gradient})
                 self.data.update({"objective_best": objective_final})
                 objective_best = objective_final
 
