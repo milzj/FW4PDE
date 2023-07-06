@@ -1,3 +1,5 @@
+import warnings
+
 class DemyanovRubinovOptimalStepSize(object):
     """Step size rule 
 
@@ -36,7 +38,7 @@ class DemyanovRubinovOptimalStepSize(object):
         dHd = obj.hessian(u)(u_minus_v).apply(u_minus_v)
 
         if dHd < 0.0:
-            raise ValueError("H(u)(d,d) is negative.")
+            warnings.warn("H(u)(d,d)={} is negative.".format(dHd))
 
         s = min(1.0, dual_gap/dHd)
 
