@@ -37,10 +37,10 @@ class DemyanovRubinovOptimalStepSize(object):
 
         dHd = obj.hessian(u)(u_minus_v).apply(u_minus_v)
 
+        s = min(1.0, dual_gap/dHd)
         if dHd < 0.0:
             warnings.warn("H(u)(d,d)={} is negative.".format(dHd))
-
-        s = min(1.0, dual_gap/dHd)
+            s = 2.0/(iteration + 2.0)
 
         u_new.axpy(1-s, u)
         u_new.axpy(s, v)
