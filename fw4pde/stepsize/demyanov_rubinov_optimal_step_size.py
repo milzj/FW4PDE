@@ -50,6 +50,11 @@ class DemyanovRubinovOptimalStepSize(object):
 
         if obj_new >= obj_model + 1e-12*abs(obj_new):
             print("Quadratic model is not a local upper bound to objective")
+            s = 2.0/(iteration + 2.0)
+
+            u_new.zero()
+            u_new.axpy(1-s, u)
+            u_new.axpy(s, v)
 
         u.assign(u_new)
 
