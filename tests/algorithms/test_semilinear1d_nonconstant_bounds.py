@@ -33,7 +33,7 @@ def compute_yd(n, y_init=None):
     q = 1.0
 
     lb = Constant(-1.0)
-    ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0, np=np.pi)
+    ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0)
 
     x0 = 2**(-delta)/3.0
 
@@ -93,7 +93,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
     beta = 0.0
     lb = Constant(-1.0)
-    ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0, np=np.pi)
+    ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0)
 
     m = UnitIntervalMesh(n)
     mesh = UnitIntervalMesh(2*n)
@@ -252,6 +252,22 @@ def test_convergence_rate():
     constant = np.exp(x[0])
 
     assert np.isclose(rate, 1.0, atol=0.2)
+
+    ndrop = 0
+    x_vec = ns
+    y_vec = dual_gaps
+
+    fig, ax = plt.subplots()
+    ax.plot([n for n in ns], dual_gaps)
+
+    y_vec = constant*x_vec**(-rate)
+    ax.plot(x_vec, y_vec, color="black", linestyle="--", label=r"{}\cdot 10^{}".format(constant,-rate))
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.legend(loc="lower left")
+    fig.tight_layout()
+    fig.savefig("convergence_rates_semilinear.png")
 
     # Convergence of solutions
     rates = convergence_rates(errors, [1.0/n for n in ns])
