@@ -84,13 +84,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 def test_convergence_rate():
     """Code verification for a one-dimensional boundary value problem.
 
-    dual_gap(u_h) should converge with rate h^2
-
-    distance of u_h to true solution should converge with rate h
-
-    canonical criticality measure should converge with rate h^3/2
-
-    normal map-based criticality measure should converge with rate h
+    abs(dual_gap(u_h)) should converge with rate h^2
     """
 
     n_ref = 2**16
