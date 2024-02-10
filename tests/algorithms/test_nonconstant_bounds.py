@@ -11,8 +11,6 @@ set_log_level(30)
 
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein
-from stepsize import DemyanovRubinovOptimalStepSize
 from stepsize import DemyanovRubinovAdaptiveStepSize
 
 # Source https://github.com/dolfin-adjoint/pyadjoint/blob/master/pyadjoint/verification.py
@@ -73,7 +71,6 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
     box_constraints = BoxConstraints(U, lb, ub)
     moola_box_lmo = MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
 
-    stepsize = QuasiArmijoGoldstein(gamma=0.5)
     stepsize = DemyanovRubinovOptimalStepSize()
     options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol}
 
