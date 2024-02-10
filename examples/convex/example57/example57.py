@@ -74,6 +74,11 @@ with stop_annotating():
     plot(solution_final)
     plt.savefig("solution.pdf")
 
+    gradient_final = sol["gradient_final"].data
+    c = plot(gradient_final)
+    plt.colorbar(c)
+    plt.savefig("gradient_final.pdf")
+
     solution_final = sol["control_final"]
     obj = problem.obj
     obj(solution_final)

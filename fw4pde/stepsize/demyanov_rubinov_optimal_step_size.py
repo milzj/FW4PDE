@@ -1,3 +1,5 @@
+import warnings
+
 class DemyanovRubinovOptimalStepSize(object):
     """Step size rule 
 
@@ -35,10 +37,10 @@ class DemyanovRubinovOptimalStepSize(object):
 
         dHd = obj.hessian(u)(u_minus_v).apply(u_minus_v)
 
-        if dHd < 0.0:
-            raise ValueError("H(u)(d,d) is negative.")
-
         s = min(1.0, dual_gap/dHd)
+        if dHd < 0.0:
+            warnings.warn("H(u)(d,d)={} is negative.".format(dHd))
+            s = 2.0/(iteration + 2.0)
 
         u_new.axpy(1-s, u)
         u_new.axpy(s, v)
@@ -48,6 +50,11 @@ class DemyanovRubinovOptimalStepSize(object):
 
         if obj_new >= obj_model + 1e-12*abs(obj_new):
             print("Quadratic model is not a local upper bound to objective")
+            s = 2.0/(iteration + 2.0)
+
+            u_new.zero()
+            u_new.axpy(1-s, u)
+            u_new.axpy(s, v)
 
         u.assign(u_new)
 

@@ -4,7 +4,6 @@ import sys
 here = Path(__file__).parent
 sys.path.insert(0, str(here.parent) + "/fw4pde")
 sys.path.insert(0, str(here.parent) + "/misc")
-sys.path.insert(0, str(here.parent) + "/prox")
 sys.path.insert(0, str(here.parent) + "/stats")
 
 import pytest
