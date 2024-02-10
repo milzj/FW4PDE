@@ -1,5 +1,6 @@
 [![GNU GPLv3 License](https://img.shields.io/github/license/milzj/FW4PDE)](https://choosealicense.com/licenses/gpl-3.0/)
 [![Test FW4PDE](https://github.com/milzj/FW4PDE/actions/workflows/test-FW4PDE.yml/badge.svg?style=plastic)](https://github.com/milzj/FW4PDE/actions/workflows/test-FW4PDE.yml)
+[![DOI](https://zenodo.org/badge/513952242.svg)](https://zenodo.org/doi/10.5281/zenodo.10644777)
 
 # FW4PDE: Frank--Wolfe algorithms for PDE-constrained optimization
 
