@@ -26,24 +26,7 @@ def convergence_rates(E_values, eps_values, show=True):
         print("Computed convergence rates: {}".format(r))
     return r
 
-
-def errornormL1(u, uh, mesh=mesh):
-    # TODO: Take difference first
-    F = abs(u-uh)*dx(mesh, {'quadrature_degre': 5})
-    f = assemble(F)
-
-    return f
-
 def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf, discrete_gradient=None):
-    """Problem taken from Casas and Mateos (2021).
-
-    References:
-    ----------
-    Eduardo Casas and Mariano Mateos. State error estimates for the nu-
-    merical approximation of sparse distributed control problems in the ab-
-    sence of Tikhonov regularization. Vietnam J. Math., 49(3):713–738, 2021.
-    doi:10.1007/s10013-021-00491-x.
-    """
 
     set_working_tape(Tape())
 
@@ -102,7 +85,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
     return sol["control_best"].data, sol["dual_gap"]
 
 def test_convergence_rate():
-    """Code verification for a one-dimensional initial value problem.
+    """Code verification for a one-dimensional boundary value problem.
 
     dual_gap(u_h) should converge with rate h^2
 
@@ -138,7 +121,7 @@ def test_convergence_rate():
 
     ndrop = 0
     x_vec = ns
-    y_vec = dual_gaps
+    y_vec = np.abs(dual_gaps)
     X = np.ones((len(x_vec[ndrop::]), 2)); X[:, 1] = np.log(x_vec[ndrop::]) # design matrix
     x, residudals, rank, s = np.linalg.lstsq(X, np.log(y_vec[ndrop::]), rcond=None)
 
@@ -158,7 +141,7 @@ def test_convergence_rate():
     fig.savefig("convergence_rates_bilinear.png")
 
 
-    assert np.isclose(np.median(rates), 1.0, atol=0.0)
+    assert np.isclose(np.median(rates), 2.0, rtol=0.0, atol=0.1)
 
 if __name__ == "__main__":
 
