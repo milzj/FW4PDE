@@ -11,7 +11,7 @@ set_log_level(30)
 
 from algorithms import FrankWolfe, MoolaBoxLMO
 from problem import ScaledL1Norm, BoxConstraints
-from stepsize import DemyanovRubinovAdaptiveStepSize
+from stepsize import DemyanovRubinovOptimalStepSize
 
 # Source https://github.com/dolfin-adjoint/pyadjoint/blob/master/pyadjoint/verification.py
 def convergence_rates(E_values, eps_values, show=True):
