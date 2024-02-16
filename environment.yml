@@ -9,4 +9,4 @@ dependencies:
   - scipy=1.7.0
   - numpy=1.21.1
   - matplotlib=3.4.2
-  - dolfin-adjoint=2019.1.0
+  - dolfin-adjoint=2023.0.0
