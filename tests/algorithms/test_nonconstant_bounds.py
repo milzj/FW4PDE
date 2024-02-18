@@ -45,7 +45,12 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
     if u_init != None:
         u = project(u_init, U)
-
+        u_vec = u.vector()[:]
+        lb_vec = project(lb, U).vector()[:]
+        ub_vec = project(ub, U).vector()[:]
+        u_vec = np.clip(u_vec, lb_vec, ub_vec)
+        u.vector()[:] = u_vec
+        
     V = FunctionSpace(mesh, "CG", 1)
     y = Function(V)
     w = TrialFunction(V)
