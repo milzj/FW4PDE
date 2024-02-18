@@ -30,7 +30,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
     # x0 should be a grid point
 
-    beta = 0.0
+    beta = 0.001
     lb = Expression("-1", degree = 0)
     ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0)
 
