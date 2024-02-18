@@ -89,7 +89,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 def test_convergence_rate():
     """Code verification for a one-dimensional boundary value problem.
 
-    abs(dual_gap(u_h)) should converge with rate h^2
+    dual_gap(u_h) should converge with rate h^2
     """
 
     n_ref = 2**16
