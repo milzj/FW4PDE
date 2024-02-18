@@ -117,13 +117,14 @@ def test_convergence_rate():
 
     ndrop = 0
     x_vec = ns
-    y_vec = np.abs(dual_gaps)
+    y_vec = dual_gaps
     X = np.ones((len(x_vec[ndrop::]), 2)); X[:, 1] = np.log(x_vec[ndrop::]) # design matrix
     x, residudals, rank, s = np.linalg.lstsq(X, np.log(y_vec[ndrop::]), rcond=None)
 
     rate = x[1]
     constant = np.exp(x[0])
-
+    assert np.isclose(rate, 1.0, rtol=0.0, atol=0.1)
+    
     fig, ax = plt.subplots()
     ax.plot([n for n in ns], dual_gaps)
 
@@ -137,7 +138,7 @@ def test_convergence_rate():
     fig.savefig("convergence_rates_bilinear.png")
 
 
-    assert np.isclose(np.median(rates), 2.0, rtol=0.0, atol=0.1)
+    assert np.isclose(np.median(rates), 1.0, rtol=0.0, atol=0.1)
 
 if __name__ == "__main__":
 
