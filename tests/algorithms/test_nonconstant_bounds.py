@@ -123,7 +123,7 @@ def test_convergence_rate():
 
     rate = x[1]
     constant = np.exp(x[0])
-    assert np.isclose(rate, 1.0, rtol=0.0, atol=0.1)
+    assert np.isclose(-rate, 1.0, rtol=0.0, atol=0.1)
     
     fig, ax = plt.subplots()
     ax.plot([n for n in ns], dual_gaps)
