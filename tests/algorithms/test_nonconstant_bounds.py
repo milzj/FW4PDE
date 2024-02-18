@@ -62,7 +62,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
     L = u*v*dx
     A, b = assemble_system(a, L, bc)
 
-    solver = LUSolver(A, "petsc")
+    solver = KrylovSolver(A, "cg")
     solver.solve(y.vector(), b)
 
     J = assemble(0.5*inner(y-yd,y-yd)*dx)
