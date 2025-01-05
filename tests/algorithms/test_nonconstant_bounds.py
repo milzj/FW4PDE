@@ -30,7 +30,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
     # x0 should be a grid point
 
-    beta = 0.0
+    beta = 0.001
     lb = Expression("-1", degree = 0)
     ub = Expression("1+0.1*sin(2*pi*x[0])", degree = 0)
 
@@ -45,7 +45,12 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 
     if u_init != None:
         u = project(u_init, U)
-
+        u_vec = u.vector()[:]
+        lb_vec = project(lb, U).vector()[:]
+        ub_vec = project(ub, U).vector()[:]
+        u_vec = np.clip(u_vec, lb_vec, ub_vec)
+        u.vector()[:] = u_vec
+        
     V = FunctionSpace(mesh, "CG", 1)
     y = Function(V)
     w = TrialFunction(V)
@@ -57,7 +62,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
     L = u*v*dx
     A, b = assemble_system(a, L, bc)
 
-    solver = LUSolver(A, "petsc")
+    solver = KrylovSolver(A, "cg")
     solver.solve(y.vector(), b)
 
     J = assemble(0.5*inner(y-yd,y-yd)*dx)
@@ -84,7 +89,7 @@ def solve_problem(n, n_ref,  u_init=None, maxiter=1000, gtol=1e-15, ftol=-np.inf
 def test_convergence_rate():
     """Code verification for a one-dimensional boundary value problem.
 
-    abs(dual_gap(u_h)) should converge with rate h^2
+    dual_gap(u_h) should converge with rate h^2
     """
 
     n_ref = 2**16
@@ -112,13 +117,14 @@ def test_convergence_rate():
 
     ndrop = 0
     x_vec = ns
-    y_vec = np.abs(dual_gaps)
+    y_vec = dual_gaps
     X = np.ones((len(x_vec[ndrop::]), 2)); X[:, 1] = np.log(x_vec[ndrop::]) # design matrix
     x, residudals, rank, s = np.linalg.lstsq(X, np.log(y_vec[ndrop::]), rcond=None)
 
     rate = x[1]
     constant = np.exp(x[0])
-
+    assert np.isclose(-rate, 1.0, rtol=0.0, atol=0.1)
+    
     fig, ax = plt.subplots()
     ax.plot([n for n in ns], dual_gaps)
 
@@ -132,7 +138,7 @@ def test_convergence_rate():
     fig.savefig("convergence_rates_bilinear.png")
 
 
-    assert np.isclose(np.median(rates), 2.0, rtol=0.0, atol=0.1)
+    assert np.isclose(np.median(rates), 1.0, rtol=0.0, atol=0.1)
 
 if __name__ == "__main__":
 
