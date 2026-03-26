@@ -56,4 +56,3 @@ class DunnScalingStepSize(object):
         return omega, 0
 
 
-

@@ -1,5 +1,9 @@
 import fenics
 import numpy as np
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "misc"))
 
 from stats import regularity_test
 

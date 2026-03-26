@@ -61,4 +61,3 @@ class QuasiArmijoGoldstein(object):
 
         return s, ls_calls
 
-

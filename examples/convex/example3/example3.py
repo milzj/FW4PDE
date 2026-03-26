@@ -1,4 +1,4 @@
-"""Implements Example 1 from
+"""Implements Example 3 from
 G. Stadler, https://link.springer.com/article/10.1007/s10589-007-9150-9
 """
 
@@ -16,6 +16,7 @@ lb = Constant(-10.0)
 ub = Expression('x[0] <= 0.25 ? 0 : -5.0+20.0*x[0]', degree=1)
 
 beta = 0.002
+alpha = 0.0002
 yd = Expression("sin(4*pi*x[0])*cos(8*pi*x[1])*exp(2.0*x[0])", degree = 1)
 g = Expression("10.0*cos(8*pi*x[0])*cos(8*pi*x[1])", degree = 1)
 
@@ -28,7 +29,7 @@ mesh = UnitSquareMesh(n,n)
 U = FunctionSpace(mesh, "DG", 0)
 V = FunctionSpace(mesh, "CG", 1)
 
-scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta)
+scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta,alpha=alpha)
 
 u = Function(U)
 y = TrialFunction(V)
@@ -53,7 +54,7 @@ problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
 box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
-moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta, alpha=alpha)
 
 stepsize = fw4pde.stepsize.QuasiArmijoGoldstein(alpha=0.5, gamma=0.75)
 
@@ -67,13 +68,13 @@ sol = solver.solve()
 solution_final = sol["control_final"].data
 c = plot(solution_final)
 plt.colorbar(c)
-plt.savefig("solution_final.pdf")
+plt.savefig("solution_final.png")
 plt.close()
 
 solution_best = sol["control_best"].data
 c = plot(solution_best)
 plt.colorbar(c)
-plt.savefig("solution_best.pdf")
+plt.savefig("solution_best.png")
 
 error = errornorm(solution_final, solution_best, degree_rise = 0)
 print("Difference of best and final iterate={}".format(error))

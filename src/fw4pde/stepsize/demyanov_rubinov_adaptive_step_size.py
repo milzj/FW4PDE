@@ -91,4 +91,3 @@ class DemyanovRubinovAdaptiveStepSize(object):
         self._M = max(0.5*M, Mmin)
 
         return s, ls_calls
-

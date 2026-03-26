@@ -25,6 +25,9 @@ class DemyanovRubinovOptimalStepSize(object):
 
     """
 
+    def __init__(self, alpha=0.0):
+        self._alpha = alpha
+
     def __str__(self):
 
         s = "Demyanov--Rubinov optimal step size.\n"
@@ -35,7 +38,7 @@ class DemyanovRubinovOptimalStepSize(object):
 
         u_new.zero()
 
-        dHd = obj.hessian(u)(u_minus_v).apply(u_minus_v)
+        dHd = obj.hessian(u)(u_minus_v).apply(u_minus_v) + self._alpha * u_minus_v.norm()**2
 
         s = min(1.0, dual_gap/dHd)
         if dHd < 0.0:
@@ -59,6 +62,5 @@ class DemyanovRubinovOptimalStepSize(object):
         u.assign(u_new)
 
         return s, 0
-
 
 

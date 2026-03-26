@@ -1,6 +1,5 @@
-"""Implements Example 5.7 from
-K. Kunisch and D. Walter. On fast convergence rates for generalized conditional gradient
-methods with backtracking stepsize. arXiv:2109.15217v1
+"""Implements Example 1 from
+G. Stadler, https://link.springer.com/article/10.1007/s10589-007-9150-9
 """
 
 from fenics import *
@@ -20,10 +19,11 @@ lb = Constant(-30.0)
 ub = Constant(30.0)
 
 beta = 0.001
+alpha = 1e-4
 
 yd = Expression("sin(2*pi*x[0])*sin(2*pi*x[1])*exp(2*x[0])/6.0", degree = 1)
 
-n = 32
+n = 128
 
 maxiter = 1000
 gtol = 1e-8
@@ -59,11 +59,10 @@ problem = MoolaOptimizationProblem(rf)
 u_moola = moola.DolfinPrimalVector(u)
 
 with stop_annotating():
-    scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta)
+    scaled_L1_norm = fw4pde.problem.ScaledL1Norm(U,beta=beta, alpha=alpha)
     box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
-    moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta)
+    moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta, alpha)
 
-    stepsize = fw4pde.stepsize.QuasiArmijoGoldstein(gamma=0.75)
     stepsize = fw4pde.stepsize.DemyanovRubinovOptimalStepSize()
 
     options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol, "display": 2}
@@ -75,12 +74,12 @@ with stop_annotating():
 
     solution_final = sol["control_final"].data
     plot(solution_final)
-    plt.savefig("solution.pdf")
+    plt.savefig("solution.png")
 
     gradient_final = sol["gradient_final"].data
     c = plot(gradient_final)
     plt.colorbar(c)
-    plt.savefig("gradient_final.pdf")
+    plt.savefig("gradient_final.png")
 
     solution_final = sol["control_final"]
     obj = problem.obj

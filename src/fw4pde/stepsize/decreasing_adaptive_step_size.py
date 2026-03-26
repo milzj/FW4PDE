@@ -26,4 +26,3 @@ class DecreasingAdaptiveStepSize(object):
         return s, 0
 
 
-

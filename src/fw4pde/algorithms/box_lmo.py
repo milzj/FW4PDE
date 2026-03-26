@@ -11,7 +11,7 @@ class NumpyBoxLMO(object):
         https://arxiv.org/abs/2109.15217, 2021
     """
 
-    def __init__(self, lb, ub, beta):
+    def __init__(self, lb, ub, beta, alpha=0.0):
 
         n = lb.size
         self._gradient = np.zeros(n)
@@ -20,6 +20,7 @@ class NumpyBoxLMO(object):
         self._lb = lb
         self._ub = ub
         self._beta = beta
+        self._alpha = alpha
 
     @property
     def solution(self):
@@ -38,12 +39,22 @@ class NumpyBoxLMO(object):
         """
 
         beta = self._beta
+        alpha = self._alpha
         lb = self._lb
         ub = self._ub
 
-        self._solution *= 0.0
         self._gradient[:] = gradient[:]
 
+        if alpha > 0.0:
+            # Exact solution of
+            # min_x 0.5*alpha*||x||_2^2 + <gradient, x> + beta*||x||_1
+            # s.t. lb <= x <= ub
+            z = -self._gradient
+            self._solution[:] = np.sign(z) * np.maximum(np.abs(z) - beta, 0.0) / alpha
+            self._solution[:] = np.clip(self._solution, lb, ub)
+            return
+
+        self._solution[:] = np.clip(0.0, lb, ub)
 
         idx = self._gradient > beta
         self._solution[idx] = lb[idx]
@@ -55,9 +66,9 @@ class NumpyBoxLMO(object):
 
 class MoolaBoxLMO(NumpyBoxLMO):
 
-    def __init__(self, lb, ub, beta):
+    def __init__(self, lb, ub, beta, alpha=0.0):
 
-        super().__init__(lb, ub, beta)
+        super().__init__(lb, ub, beta, alpha)
 
 
     def solve(self, gradient, v):

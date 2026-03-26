@@ -6,7 +6,8 @@ setup(name='fw4pde',
       author="Johannes Milz",
       author_email='johannes.milz@gatech.edu',
       url='https://github.com/milzj/FW4PDE',
-      packages=find_packages(),
+  package_dir={"": "src"},
+  packages=find_packages(where="src"),
       install_requires=[
         "numpy",
         "scipy"

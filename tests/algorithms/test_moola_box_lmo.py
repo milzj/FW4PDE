@@ -9,14 +9,19 @@ import moola
 
 @pytest.mark.parametrize("n", [64, 128, 32])
 @pytest.mark.parametrize("beta", [0.1, 1e-3, 1e-2, 1.0])
-def test_moola_box_lmo(n, beta):
+@pytest.mark.parametrize("alpha", [0.0, 0.25, 1.0])
+def test_moola_box_lmo(n, beta, alpha):
     """
-    The solution to min_x (g, x) + beta norm(x,L1) s.t. lb <= x <= ub
+    For alpha = 0, the solution to
+    min_x (g, x) + beta norm(x,L1) s.t. lb <= x <= ub
     satisfies the fixed point equation
 
     x = projection(u-projection(u, -beta, beta), lb, ub),
 
     where u = x - g.
+
+    For alpha > 0, the exact solution is the clipped soft-thresholding point
+    of -g/alpha with threshold beta/alpha.
     """
 
 
@@ -31,7 +36,7 @@ def test_moola_box_lmo(n, beta):
     lb = -np.ones(W.dim())
     ub = np.ones(W.dim())
 
-    moola_box_lmo = MoolaBoxLMO(lb, ub, beta)
+    moola_box_lmo = MoolaBoxLMO(lb, ub, beta, alpha)
 
 
     f = interpolate(Expression("sin(2*pi*x[0])+exp(x[1])", name='Control', degree=2), W)
@@ -66,10 +71,13 @@ def test_moola_box_lmo(n, beta):
     # LMO solution
     solution = v_moola.data
     # Evaluate fixed point equation (output is _solution)
-    u = solution.vector().get_local() - gradient.data.vector().get_local()
-
-    u_projection = projection(u, -beta, beta)
-    __solution = projection(u-u_projection, lb, ub)
+    gradient_vec = gradient.data.vector().get_local()
+    if alpha > 0.0:
+        __solution = projection(np.sign(-gradient_vec) * np.maximum(np.abs(gradient_vec) - beta, 0.0) / alpha, lb, ub)
+    else:
+        u = solution.vector().get_local() - gradient_vec
+        u_projection = projection(u, -beta, beta)
+        __solution = projection(u-u_projection, lb, ub)
     _solution = Function(W)
     _solution.vector().set_local(__solution)
 
