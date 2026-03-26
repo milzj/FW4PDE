@@ -8,7 +8,7 @@ The package implements conditional gradient methods for the solution
 of the PDE-constrained optimization problems
 
 $$
-	\min_{u \in U_{\text{ad}}}  J(S(u)) + (\alpha/2) \|u\|_{L^2(D)}^2 + \beta \\|u\\|_{L^1(D)},
+	\min_{u \in U_{\text{ad}}}  J(S(u)) + (\alpha/2) \\|u\\|_{L^2(D)}^2 + \beta \\|u\\|_{L^1(D)},
 $$
 
 where $\alpha, \beta \geq 0$, $S(u)$ is the solution to a potentially nonlinear PDE, and 
