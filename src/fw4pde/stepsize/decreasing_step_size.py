@@ -18,4 +18,3 @@ class DecreasingStepSize(object):
         return s, 0
 
 
-

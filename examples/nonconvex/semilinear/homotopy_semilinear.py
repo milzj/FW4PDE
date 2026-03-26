@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 set_log_level(30)
 
-from algorithms import FrankWolfe, MoolaBoxLMO
-from problem import ScaledL1Norm, BoxConstraints
-from stepsize import QuasiArmijoGoldstein
+from fw4pde.algorithms import FrankWolfe, MoolaBoxLMO
+from fw4pde.problem import ScaledL1Norm, BoxConstraints
+from fw4pde.stepsize import QuasiArmijoGoldstein
 
 
 def semilinear(n, u_init):

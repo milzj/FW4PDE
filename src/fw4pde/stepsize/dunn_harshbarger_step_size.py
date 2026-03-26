@@ -30,4 +30,3 @@ class DunnHarshbargerStepSize(object):
         return s, 0
 
 
-
