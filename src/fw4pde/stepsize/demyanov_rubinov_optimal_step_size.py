@@ -38,9 +38,12 @@ class DemyanovRubinovOptimalStepSize(object):
 
         u_new.zero()
 
-        dHd = obj.hessian(u)(u_minus_v).apply(u_minus_v) + self._alpha * u_minus_v.norm()**2
+        dHd = obj.hessian(u)(u_minus_v).apply(u_minus_v) 
 
-        s = min(1.0, dual_gap/dHd)
+        alpha = self._alpha 
+        c = alpha*u_minus_v.norm()**2
+        s = min(1.0, (c/2.0+dual_gap)/(dHd+c))
+
         if dHd < 0.0:
             warnings.warn("H(u)(d,d)={} is negative.".format(dHd))
             s = 2.0/(iteration + 2.0)

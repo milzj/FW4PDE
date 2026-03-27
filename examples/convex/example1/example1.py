@@ -63,7 +63,7 @@ with stop_annotating():
     box_constraints = fw4pde.problem.BoxConstraints(U, lb, ub)
     moola_box_lmo = fw4pde.algorithms.MoolaBoxLMO(box_constraints.lb, box_constraints.ub, beta, alpha)
 
-    stepsize = fw4pde.stepsize.DemyanovRubinovOptimalStepSize()
+    stepsize = fw4pde.stepsize.DemyanovRubinovOptimalStepSize(alpha=alpha)
 
     options = {"maxiter": maxiter, "gtol": gtol, "ftol": ftol, "display": 2}
 
